@@ -13,8 +13,11 @@ const (
 	Right
 )
 
-// Formatter is an interface describes the methods to be provided by a column
-// formatter.
+const DfltColSep = " "
+
+// Formatter is an interface which describes the methods to be provided by a
+// column formatter. Various instances of the Formatter interface are given
+// in the col/colfmt package. These should cover many common requirements.
 type Formatter interface {
 	// Formatted should return the value as a string
 	Formatted(interface{}) string
@@ -41,7 +44,7 @@ func New(f Formatter, colHead ...string) *Col {
 	c := &Col{
 		headers: colHead,
 		f:       f,
-		sep:     " ",
+		sep:     DfltColSep,
 	}
 
 	if len(c.headers) == 0 {
@@ -53,8 +56,8 @@ func New(f Formatter, colHead ...string) *Col {
 	return c
 }
 
-// SetSep sets the separator for the column from the default value (" ")
-// to the value passed
+// SetSep sets the separator for the column from the default value (see
+// DfltColSep) to the value passed
 func (c *Col) SetSep(s string) *Col {
 	c.sep = s
 	return c
