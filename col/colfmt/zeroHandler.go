@@ -14,23 +14,23 @@ type FloatZeroHandler struct {
 }
 
 // setEpsilon sets the epsilon value if it hasn't already been set
-func (f *FloatZeroHandler) setEpsilon(prec int) {
-	if f.epsilon == 0.0 {
-		f.epsilon = calcEpsilon(prec)
+func (fzh *FloatZeroHandler) setEpsilon(prec int) {
+	if fzh.epsilon == 0.0 {
+		fzh.epsilon = calcEpsilon(prec)
 	}
 }
 
 // GetZeroStr calculates the appropriate zero string and returns it with a
 // boolean indicating whether it should be used or not (if the value passed
 // was actually zero)
-func (z *FloatZeroHandler) GetZeroStr(prec int, v interface{}) (bool, string) {
-	if z != nil && z.Handle {
-		z.setEpsilon(prec)
+func (fzh *FloatZeroHandler) GetZeroStr(prec int, v interface{}) (bool, string) {
+	if fzh != nil && fzh.Handle {
+		fzh.setEpsilon(prec)
 		f64, ok := getValAsFloat64(v)
 		if ok &&
-			((prec > 0 && f64 < z.epsilon && f64 > (-1*z.epsilon)) ||
-				(prec == 0 && f64 <= z.epsilon && f64 >= (-1*z.epsilon))) {
-			return true, z.Replace
+			((prec > 0 && f64 < fzh.epsilon && f64 > (-1*fzh.epsilon)) ||
+				(prec == 0 && f64 <= fzh.epsilon && f64 >= (-1*fzh.epsilon))) {
+			return true, fzh.Replace
 		}
 	}
 	return false, ""

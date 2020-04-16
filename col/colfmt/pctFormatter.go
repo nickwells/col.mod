@@ -29,9 +29,8 @@ func (f *Percent) Formatted(v interface{}) string {
 	if v == nil {
 		if f.IgnoreNil {
 			return ""
-		} else {
-			return "nil"
 		}
+		return "nil"
 	}
 
 	if f.Prec < 0 {
