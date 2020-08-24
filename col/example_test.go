@@ -9,14 +9,20 @@ import (
 	"github.com/nickwells/col.mod/v2/col/colfmt"
 )
 
-// Example_report demonstrates how the col package might be used to generate a
-// report
+// Example_report demonstrates how the col package might be used to generate
+// a report. Notice how we have multi-line column headings and how common
+// header text is shared between adjacent columns (this makes for more
+// concise reports)
 func Example_report() {
+	// First, create the header
 	h, err := col.NewHeader()
 	if err != nil {
 		fmt.Println("Error found while constructing the header:", err)
 		return
 	}
+
+	// Now create the report. List the columns we want giving the format
+	// types and the column headings
 	rpt, err := col.NewReport(h, os.Stdout,
 		col.New(&colfmt.Int{}, "Date"),
 		col.New(&colfmt.Int{W: 2}, "Number of", "Boys"),
@@ -35,21 +41,9 @@ func Example_report() {
 		girls int
 	}
 	for _, v := range []rowStruct{
-		{
-			y:     2011,
-			boys:  14,
-			girls: 13,
-		},
-		{
-			y:     2012,
-			boys:  12,
-			girls: 16,
-		},
-		{
-			y:     2013,
-			boys:  13,
-			girls: 13,
-		},
+		{y: 2011, boys: 14, girls: 13},
+		{y: 2012, boys: 12, girls: 16},
+		{y: 2013, boys: 13, girls: 13},
 	} {
 		err = rpt.PrintRow(v.y,
 			v.boys, v.girls,
@@ -70,21 +64,28 @@ func Example_report() {
 }
 
 // Example_report2 demonstrates how the col package might be used to generate
-// a report
+// a report. This is a more sophisticated report demonstrating how you can
+// customise the header, skip columns and print column totals.
 func Example_report2() {
+	// First, create the header
 	h, err := col.NewHeader(
+		// On the first page only, print a report description
 		col.HdrOptPreHdrFunc(func(w io.Writer, n uint64) {
 			if n == 0 {
 				fmt.Fprintln(w,
-					"a report on the variation in class sizes over time")
+					"A report on the variation in class sizes over time")
 			}
 		}),
+		// Use '-' to underline the column headings
 		col.HdrOptUnderlineWith('-'),
 	)
 	if err != nil {
 		fmt.Println("Error found while constructing the header:", err)
 		return
 	}
+
+	// Now create the report. List the columns we want giving the format
+	// types and the column headings
 	rpt, err := col.NewReport(h, os.Stdout,
 		col.New(&colfmt.Int{}, "Academic", "Year"),
 		col.New(&colfmt.Int{}, "Date"),
@@ -145,6 +146,8 @@ func Example_report2() {
 		}
 		lastYear = v.year
 	}
+
+	// now print the column totals using PrintFooterVals
 	ratio := float64(totBoys) / float64(totGirls)
 	avgClassSize := (totBoys + totGirls) / count
 	err = rpt.PrintFooterVals(2, totBoys, totGirls, ratio, avgClassSize)
@@ -152,7 +155,7 @@ func Example_report2() {
 		fmt.Println("Error found while printing the report footer:", err)
 	}
 	// Output:
-	// a report on the variation in class sizes over time
+	// A report on the variation in class sizes over time
 	// Academic      -Number of-      Ratio Class
 	//     Year Date  Boys Girls Boys-Girls  Size
 	//     ---- ----  ---- ----- ----------  ----

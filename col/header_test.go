@@ -128,8 +128,10 @@ func TestHdrCreate(t *testing.T) {
 		h, err := NewHeader(tc.hdrOpts...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
 			if !h.isEqual(tc.expectedHdr) {
-				t.Errorf("%s: bad header. Expected: %v Got %v",
-					tc.IDStr(), tc.expectedHdr, h)
+				t.Log(tc.IDStr())
+				t.Logf("\t: expected header: %v\n", tc.expectedHdr)
+				t.Logf("\t:   actual header: %v\n", h)
+				t.Error("\t: header is incorrect\n")
 			}
 		}
 	}
