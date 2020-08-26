@@ -10,60 +10,60 @@ import (
 func TestPctFormatter(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
-		pf       colfmt.Percent
-		val      interface{}
-		expected string
+		pf     colfmt.Percent
+		val    interface{}
+		expStr string
 	}{
 		{
-			ID:       testhelper.MkID("basic"),
-			val:      0.123,
-			expected: "12%",
+			ID:     testhelper.MkID("basic"),
+			val:    0.123,
+			expStr: "12%",
 		},
 		{
-			ID:       testhelper.MkID("basic, pass nil"),
-			expected: "nil",
+			ID:     testhelper.MkID("basic, pass nil"),
+			expStr: "nil",
 		},
 		{
-			ID:       testhelper.MkID("basic, pass float64"),
-			val:      float64(0.123),
-			expected: "12%",
+			ID:     testhelper.MkID("basic, pass float64"),
+			val:    float64(0.123),
+			expStr: "12%",
 		},
 		{
-			ID:       testhelper.MkID("basic, pass float32"),
-			val:      float32(0.123),
-			expected: "12%",
+			ID:     testhelper.MkID("basic, pass float32"),
+			val:    float32(0.123),
+			expStr: "12%",
 		},
 		{
-			ID:       testhelper.MkID("basic, pass int"),
-			val:      int(123),
-			expected: "%!f(int=123)",
+			ID:     testhelper.MkID("basic, pass int"),
+			val:    int(123),
+			expStr: "%!f(int=123)",
 		},
 		{
-			ID:       testhelper.MkID("basic, pass nil"),
-			expected: "nil",
+			ID:     testhelper.MkID("basic, pass nil"),
+			expStr: "nil",
 		},
 		{
-			ID:       testhelper.MkID("ignore nil, pass a value"),
-			pf:       colfmt.Percent{IgnoreNil: true},
-			val:      1.23,
-			expected: "123%",
+			ID:     testhelper.MkID("ignore nil, pass a value"),
+			pf:     colfmt.Percent{IgnoreNil: true},
+			val:    1.23,
+			expStr: "123%",
 		},
 		{
-			ID:       testhelper.MkID("ignore nil, pass nil"),
-			pf:       colfmt.Percent{IgnoreNil: true},
-			expected: "",
+			ID:     testhelper.MkID("ignore nil, pass nil"),
+			pf:     colfmt.Percent{IgnoreNil: true},
+			expStr: "",
 		},
 		{
-			ID:       testhelper.MkID("with precision"),
-			pf:       colfmt.Percent{Prec: 2},
-			val:      1.2345,
-			expected: "123.45%",
+			ID:     testhelper.MkID("with precision"),
+			pf:     colfmt.Percent{Prec: 2},
+			val:    1.2345,
+			expStr: "123.45%",
 		},
 		{
-			ID:       testhelper.MkID("with bad precision"),
-			pf:       colfmt.Percent{Prec: -1},
-			val:      1.2345,
-			expected: "123%",
+			ID:     testhelper.MkID("with bad precision"),
+			pf:     colfmt.Percent{Prec: -1},
+			val:    1.2345,
+			expStr: "123%",
 		},
 		{
 			ID: testhelper.MkID("with zero handling, large (just) value"),
@@ -73,8 +73,8 @@ func TestPctFormatter(t *testing.T) {
 					Replace: "abcd",
 				},
 			},
-			val:      0.0050000001,
-			expected: "1%",
+			val:    0.0050000001,
+			expStr: "1%",
 		},
 		{
 			ID: testhelper.MkID(
@@ -85,8 +85,8 @@ func TestPctFormatter(t *testing.T) {
 					Replace: "abcd",
 				},
 			},
-			val:      0.005,
-			expected: "ab",
+			val:    0.005,
+			expStr: "ab",
 		},
 		{
 			ID: testhelper.MkID(
@@ -98,8 +98,8 @@ func TestPctFormatter(t *testing.T) {
 				},
 				W: 4,
 			},
-			val:      0.0,
-			expected: "abcd",
+			val:    0.0,
+			expStr: "abcd",
 		},
 		{
 			ID: testhelper.MkID(
@@ -111,8 +111,8 @@ func TestPctFormatter(t *testing.T) {
 				},
 				Prec: 1,
 			},
-			val:      0.0005,
-			expected: "0.1%",
+			val:    0.0005,
+			expStr: "0.1%",
 		},
 		{
 			ID: testhelper.MkID(
@@ -124,8 +124,8 @@ func TestPctFormatter(t *testing.T) {
 				},
 				Prec: 1,
 			},
-			val:      0.0004999,
-			expected: "abcd",
+			val:    0.0004999,
+			expStr: "abcd",
 		},
 		{
 			ID: testhelper.MkID(
@@ -137,8 +137,8 @@ func TestPctFormatter(t *testing.T) {
 				},
 				Prec: 1,
 			},
-			val:      -0.0004999,
-			expected: "abcd",
+			val:    -0.0004999,
+			expStr: "abcd",
 		},
 		{
 			ID: testhelper.MkID(
@@ -151,27 +151,22 @@ func TestPctFormatter(t *testing.T) {
 				Prec: 1,
 				W:    6,
 			},
-			val:      0.0004999,
-			expected: "abcd",
+			val:    0.0004999,
+			expStr: "abcd",
 		},
 		{
 			ID: testhelper.MkID("basic, no % sign"),
 			pf: colfmt.Percent{
 				SuppressPct: true,
 			},
-			val:      0.123,
-			expected: "12",
+			val:    0.123,
+			expStr: "12",
 		},
 	}
 
 	for _, tc := range testCases {
 		s := tc.pf.Formatted(tc.val)
-		if s != tc.expected {
-			t.Log(tc.IDStr())
-			t.Log("\t: expected:", tc.expected)
-			t.Log("\t:      got:", s)
-			t.Errorf("\t: badly formatted value\n")
-		}
+		testhelper.CmpValString(t, tc.IDStr(), "formatted value", s, tc.expStr)
 	}
 }
 
@@ -179,48 +174,42 @@ func TestPercentWidth(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		pf       colfmt.Percent
-		expected int
+		expWidth int
 	}{
 		{
 			ID:       testhelper.MkID("default"),
-			expected: 2,
+			expWidth: 2,
 		},
 		{
 			ID:       testhelper.MkID("no % sign"),
 			pf:       colfmt.Percent{SuppressPct: true},
-			expected: 1,
+			expWidth: 1,
 		},
 		{
 			ID:       testhelper.MkID("zero precision, small, non-zero width"),
 			pf:       colfmt.Percent{W: 1},
-			expected: 2,
+			expWidth: 2,
 		},
 		{
 			ID:       testhelper.MkID("zero precision, large, non-zero width"),
 			pf:       colfmt.Percent{W: 6},
-			expected: 6,
+			expWidth: 6,
 		},
 		{
 			ID: testhelper.MkID(
 				"non-zero precision, small, non-zero width"),
 			pf:       colfmt.Percent{W: 1, Prec: 1},
-			expected: 4,
+			expWidth: 4,
 		},
 		{
 			ID: testhelper.MkID(
 				"non-zero precision, large, non-zero width"),
 			pf:       colfmt.Percent{W: 6, Prec: 1},
-			expected: 6,
+			expWidth: 6,
 		},
 	}
 
 	for _, tc := range testCases {
-		w := tc.pf.Width()
-		if w != tc.expected {
-			t.Log(tc.IDStr())
-			t.Log("\t: expected:", tc.expected)
-			t.Log("\t:      got:", w)
-			t.Errorf("\t: Width\n")
-		}
+		testhelper.CmpValInt(t, tc.IDStr(), "width", tc.pf.Width(), tc.expWidth)
 	}
 }

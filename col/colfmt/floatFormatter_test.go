@@ -10,41 +10,41 @@ import (
 func TestFloatFormatter(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
-		ff       colfmt.Float
-		val      interface{}
-		expected string
+		ff     colfmt.Float
+		val    interface{}
+		expStr string
 	}{
 		{
-			ID:       testhelper.MkID("basic"),
-			val:      1.23,
-			expected: "1",
+			ID:     testhelper.MkID("basic"),
+			val:    1.23,
+			expStr: "1",
 		},
 		{
-			ID:       testhelper.MkID("basic, pass nil"),
-			expected: "%!f(<nil>)",
+			ID:     testhelper.MkID("basic, pass nil"),
+			expStr: "%!f(<nil>)",
 		},
 		{
-			ID:       testhelper.MkID("ignore nil, pass a value"),
-			ff:       colfmt.Float{IgnoreNil: true},
-			val:      1.23,
-			expected: "1",
+			ID:     testhelper.MkID("ignore nil, pass a value"),
+			ff:     colfmt.Float{IgnoreNil: true},
+			val:    1.23,
+			expStr: "1",
 		},
 		{
-			ID:       testhelper.MkID("ignore nil, pass nil"),
-			ff:       colfmt.Float{IgnoreNil: true},
-			expected: "",
+			ID:     testhelper.MkID("ignore nil, pass nil"),
+			ff:     colfmt.Float{IgnoreNil: true},
+			expStr: "",
 		},
 		{
-			ID:       testhelper.MkID("with precision"),
-			ff:       colfmt.Float{Prec: 2},
-			val:      1.2345,
-			expected: "1.23",
+			ID:     testhelper.MkID("with precision"),
+			ff:     colfmt.Float{Prec: 2},
+			val:    1.2345,
+			expStr: "1.23",
 		},
 		{
-			ID:       testhelper.MkID("with bad precision"),
-			ff:       colfmt.Float{Prec: -1},
-			val:      1.2345,
-			expected: "1",
+			ID:     testhelper.MkID("with bad precision"),
+			ff:     colfmt.Float{Prec: -1},
+			val:    1.2345,
+			expStr: "1",
 		},
 		{
 			ID: testhelper.MkID("with zero handling, large (just) value"),
@@ -54,8 +54,8 @@ func TestFloatFormatter(t *testing.T) {
 					Replace: "abcd",
 				},
 			},
-			val:      0.50000001,
-			expected: "1",
+			val:    0.50000001,
+			expStr: "1",
 		},
 		{
 			ID: testhelper.MkID(
@@ -66,8 +66,8 @@ func TestFloatFormatter(t *testing.T) {
 					Replace: "abcd",
 				},
 			},
-			val:      0.5,
-			expected: "a",
+			val:    0.5,
+			expStr: "a",
 		},
 		{
 			ID: testhelper.MkID(
@@ -79,8 +79,8 @@ func TestFloatFormatter(t *testing.T) {
 				},
 				Prec: 1,
 			},
-			val:      0.05,
-			expected: "0.1",
+			val:    0.05,
+			expStr: "0.1",
 		},
 		{
 			ID: testhelper.MkID(
@@ -92,8 +92,8 @@ func TestFloatFormatter(t *testing.T) {
 				},
 				Prec: 1,
 			},
-			val:      0.04999,
-			expected: "abc",
+			val:    0.04999,
+			expStr: "abc",
 		},
 		{
 			ID: testhelper.MkID(
@@ -105,8 +105,8 @@ func TestFloatFormatter(t *testing.T) {
 				},
 				Prec: 1,
 			},
-			val:      -0.04999,
-			expected: "abc",
+			val:    -0.04999,
+			expStr: "abc",
 		},
 		{
 			ID: testhelper.MkID(
@@ -119,8 +119,8 @@ func TestFloatFormatter(t *testing.T) {
 				Prec: 1,
 				W:    6,
 			},
-			val:      0.04999,
-			expected: "abcd",
+			val:    0.04999,
+			expStr: "abcd",
 		},
 		{
 			ID: testhelper.MkID(
@@ -131,8 +131,8 @@ func TestFloatFormatter(t *testing.T) {
 					Replace: "",
 				},
 			},
-			val:      float64(0.0),
-			expected: "",
+			val:    float64(0.0),
+			expStr: "",
 		},
 		{
 			ID: testhelper.MkID(
@@ -143,19 +143,14 @@ func TestFloatFormatter(t *testing.T) {
 					Replace: "",
 				},
 			},
-			val:      float32(0.0),
-			expected: "",
+			val:    float32(0.0),
+			expStr: "",
 		},
 	}
 
 	for _, tc := range testCases {
 		s := tc.ff.Formatted(tc.val)
-		if s != tc.expected {
-			t.Log(tc.IDStr())
-			t.Log("\t: expected:", tc.expected)
-			t.Log("\t:      got:", s)
-			t.Errorf("\t: badly formatted value\n")
-		}
+		testhelper.CmpValString(t, tc.IDStr(), "formatted value", s, tc.expStr)
 	}
 }
 
@@ -163,31 +158,30 @@ func TestFloatWidth(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		ff       colfmt.Float
-		expected int
+		expWidth int
 	}{
 		{
 			ID:       testhelper.MkID("default"),
-			expected: 1,
+			expWidth: 1,
 		},
 		{
-			ID:       testhelper.MkID("zero precision, non-zero width"),
+			ID:       testhelper.MkID("0 prec, non-0 width"),
 			ff:       colfmt.Float{W: 3},
-			expected: 3,
+			expWidth: 3,
 		},
 		{
-			ID:       testhelper.MkID("non-zero precision, non-zero width"),
+			ID:       testhelper.MkID("non-0 prec, non-0 width, too narrow"),
 			ff:       colfmt.Float{W: 3, Prec: 2},
-			expected: 4,
+			expWidth: 4,
+		},
+		{
+			ID:       testhelper.MkID("non-0 prec, non-0 width, wide enough"),
+			ff:       colfmt.Float{W: 5, Prec: 2},
+			expWidth: 5,
 		},
 	}
 
 	for _, tc := range testCases {
-		w := tc.ff.Width()
-		if w != tc.expected {
-			t.Log(tc.IDStr())
-			t.Log("\t: expected:", tc.expected)
-			t.Log("\t:      got:", w)
-			t.Errorf("\t: Width\n")
-		}
+		testhelper.CmpValInt(t, tc.IDStr(), "width", tc.ff.Width(), tc.expWidth)
 	}
 }

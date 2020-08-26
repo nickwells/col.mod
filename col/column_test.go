@@ -137,29 +137,21 @@ c1  c2  c3  c4  c5
 	for _, tc := range testCases {
 		h, err := col.NewHeader(tc.hdrOpts...)
 		if err != nil {
-			t.Errorf("%s : an error was returned while making the header: %s",
-				tc.IDStr(), err)
+			t.Log(tc.IDStr())
+			t.Errorf("\t: making the Header returned an error: %s", err)
 			continue
 		}
 		var b bytes.Buffer
 		rpt, err := col.NewReport(h, &b, tc.cols...)
 		if err != nil {
 			t.Log(tc.IDStr())
-			t.Errorf("\t: an error was returned while making the col set: %s",
-				err)
+			t.Errorf("\t: making the Report returned an error: %s", err)
 			continue
 		}
 		err = rpt.PrintRow(tc.data...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
-			s := (&b).String()
-			if s != tc.expectedVal {
-				t.Log(tc.IDStr())
-				t.Logf("\t: expected output: %s\n", tc.expectedVal)
-				t.Logf("\t:   actual output: %s\n", s)
-				t.Logf("\t: expected length: %6d\n", len(tc.expectedVal))
-				t.Logf("\t:   actual length: %6d\n", len(s))
-				t.Error("\t: unexpected output\n")
-			}
+			testhelper.CmpValString(t, tc.IDStr(), "row",
+				(&b).String(), tc.expectedVal)
 		}
 	}
 }
@@ -252,27 +244,20 @@ func TestPrintRowSkipCols(t *testing.T) {
 		h, err := col.NewHeader(tc.hdrOpts...)
 		if err != nil {
 			t.Log(tc.IDStr())
-			t.Errorf("\t: error returned while making the header: %s",
-				err)
+			t.Errorf("\t: making the Header returned an error: %s", err)
 			continue
 		}
 		var b bytes.Buffer
 		rpt, err := col.NewReport(h, &b, tc.cols...)
 		if err != nil {
 			t.Log(tc.IDStr())
-			t.Errorf("\t: an error was returned while making the col set: %s",
-				err)
+			t.Errorf("\t: making the Report returned an error: %s", err)
 			continue
 		}
 		err = rpt.PrintRowSkipCols(tc.skip, tc.data...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
-			s := (&b).String()
-			if s != tc.expectedVal {
-				t.Errorf("%s : Expected:\n>%s<\nGot:\n>%s<\n",
-					tc.IDStr(), tc.expectedVal, s)
-				t.Logf("expected length: %6d\n", len(tc.expectedVal))
-				t.Logf("  actual length: %6d\n", len(s))
-			}
+			testhelper.CmpValString(t, tc.IDStr(), "row",
+				(&b).String(), tc.expectedVal)
 		}
 	}
 }
