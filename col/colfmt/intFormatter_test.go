@@ -102,7 +102,7 @@ func TestIntFormatter(t *testing.T) {
 
 	for _, tc := range testCases {
 		s := tc.intF.Formatted(tc.val)
-		testhelper.CmpValString(t, tc.IDStr(), "formatted value", s, tc.expStr)
+		testhelper.DiffString(t, tc.IDStr(), "formatted value", s, tc.expStr)
 	}
 }
 
@@ -133,6 +133,6 @@ func TestIntWidth(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		testhelper.CmpValInt(t, tc.IDStr(), "width", tc.intF.Width(), tc.expWidth)
+		testhelper.DiffInt(t, tc.IDStr(), "width", tc.intF.Width(), tc.expWidth)
 	}
 }

@@ -150,7 +150,7 @@ c1  c2  c3  c4  c5
 		}
 		err = rpt.PrintRow(tc.data...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
-			testhelper.CmpValString(t, tc.IDStr(), "row",
+			testhelper.DiffString(t, tc.IDStr(), "row",
 				(&b).String(), tc.expectedVal)
 		}
 	}
@@ -256,7 +256,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 		}
 		err = rpt.PrintRowSkipCols(tc.skip, tc.data...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
-			testhelper.CmpValString(t, tc.IDStr(), "row",
+			testhelper.DiffString(t, tc.IDStr(), "row",
 				(&b).String(), tc.expectedVal)
 		}
 	}

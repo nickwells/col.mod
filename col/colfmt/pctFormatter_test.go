@@ -166,7 +166,7 @@ func TestPctFormatter(t *testing.T) {
 
 	for _, tc := range testCases {
 		s := tc.pf.Formatted(tc.val)
-		testhelper.CmpValString(t, tc.IDStr(), "formatted value", s, tc.expStr)
+		testhelper.DiffString(t, tc.IDStr(), "formatted value", s, tc.expStr)
 	}
 }
 
@@ -210,6 +210,6 @@ func TestPercentWidth(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		testhelper.CmpValInt(t, tc.IDStr(), "width", tc.pf.Width(), tc.expWidth)
+		testhelper.DiffInt(t, tc.IDStr(), "width", tc.pf.Width(), tc.expWidth)
 	}
 }

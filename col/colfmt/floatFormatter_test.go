@@ -150,7 +150,7 @@ func TestFloatFormatter(t *testing.T) {
 
 	for _, tc := range testCases {
 		s := tc.ff.Formatted(tc.val)
-		testhelper.CmpValString(t, tc.IDStr(), "formatted value", s, tc.expStr)
+		testhelper.DiffString(t, tc.IDStr(), "formatted value", s, tc.expStr)
 	}
 }
 
@@ -182,6 +182,6 @@ func TestFloatWidth(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		testhelper.CmpValInt(t, tc.IDStr(), "width", tc.ff.Width(), tc.expWidth)
+		testhelper.DiffInt(t, tc.IDStr(), "width", tc.ff.Width(), tc.expWidth)
 	}
 }
