@@ -223,7 +223,8 @@ func HdrOptRepeat(n uint64) HdrOptionFunc {
 	}
 }
 
-// NewHeader creates a new Header object
+// NewHeader creates a new Header object. It will return an error if any of
+// the options returns an error.
 func NewHeader(options ...HdrOptionFunc) (*Header, error) {
 	h := &Header{
 		spanDups:     true,
@@ -240,6 +241,17 @@ func NewHeader(options ...HdrOptionFunc) (*Header, error) {
 	}
 
 	return h, nil
+}
+
+// NewHeaderOrPanic creates a new Header object. It will panic if any of
+// the options returns an error.
+func NewHeaderOrPanic(options ...HdrOptionFunc) *Header {
+	h, err := NewHeader(options...)
+	if err != nil {
+		panic(err)
+	}
+
+	return h
 }
 
 // incrDataRowsPrinted increments the dataRowsPrinted (for defer)
