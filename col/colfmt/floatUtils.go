@@ -6,17 +6,14 @@ import "math"
 // possible. It will set the boolean return value to false if it is not
 // possible
 func getValAsFloat64(v interface{}) (float64, bool) {
-	var f64 float64
-	var f32 float32
-	var ok bool
-	f64, ok = v.(float64)
-	if !ok {
-		f32, ok = v.(float32)
-		if ok {
-			f64 = float64(f32)
-		}
+	if f64, ok := v.(float64); ok {
+		return f64, true
 	}
-	return f64, ok
+	if f32, ok := v.(float32); ok {
+		return float64(f32), true
+	}
+
+	return 0.0, false
 }
 
 // calcEpsilon calculates the appropriate epsilon value for the given precision
