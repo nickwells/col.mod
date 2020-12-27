@@ -13,7 +13,8 @@ type Report struct {
 	w    io.Writer
 }
 
-// NewReport creates a new Report object
+// NewReport creates a new Report object. it will return a non-nil error if
+// no columns have been given.
 func NewReport(hdr *Header, w io.Writer, cols ...*Col) (*Report, error) {
 	if len(cols) == 0 {
 		return nil, fmt.Errorf("no columns have been given for this report")
@@ -27,6 +28,17 @@ func NewReport(hdr *Header, w io.Writer, cols ...*Col) (*Report, error) {
 	}
 
 	return rpt, nil
+}
+
+// NewReportOrPanic creates a new Report object and panics if any error is
+// reported
+func NewReportOrPanic(hdr *Header, w io.Writer, cols ...*Col) *Report {
+	rpt, err := NewReport(hdr, w, cols...)
+	if err != nil {
+		panic(err)
+	}
+
+	return rpt
 }
 
 // printFooter prints the footers under the numbered columns
@@ -137,22 +149,45 @@ func (rpt *Report) printRowSkipping(skip uint, vals ...interface{}) error {
 func (rpt *Report) printValsSkipping(skip uint, vals ...interface{}) error {
 	var pwe = printWithErr{w: rpt.w}
 
-	sep := rpt.skipCols(&pwe, skip)
+	// first collect all the strings to be printed (these may have embedded
+	// new lines)
 
+	var stringVals [][]string
+	maxLines := 0
 	for i, v := range vals {
 		c := rpt.cols[i+int(skip)]
-
-		pwe.print(sep)
-		sep = c.sep
-
-		if _, ok := v.(Skip); ok {
-			pwe.print(c.stringInCol(""))
-			continue
+		str := ""
+		if _, ok := v.(Skip); !ok {
+			str = c.f.Formatted(v)
 		}
-		pwe.print(c.stringInCol(c.f.Formatted(v)))
+		lines := strings.Split(str, "\n")
+		if len(lines) > maxLines {
+			maxLines = len(lines)
+		}
+		stringVals = append(stringVals, lines)
+	}
+	blanks := make([]string, maxLines)
+	for i, lines := range stringVals {
+		if len(lines) < maxLines {
+			lines = append(lines, blanks[:maxLines-len(lines)]...)
+			stringVals[i] = lines
+		}
 	}
 
-	pwe.println()
+	sep := rpt.skipCols(&pwe, skip)
+
+	for j := 0; j < maxLines; j++ {
+		for i, v := range stringVals {
+			c := rpt.cols[i+int(skip)]
+
+			pwe.print(sep)
+			sep = c.sep
+
+			pwe.print(c.stringInCol(v[j]))
+		}
+		pwe.println()
+	}
+
 	return pwe.error()
 }
 
