@@ -20,29 +20,48 @@ type Int struct {
 	// ZeroReplacement is the value to be printed for zero if HandleZeroes is
 	// true
 	ZeroReplacement string
+	// Verb specifies the formatting verb. If left unset it will use
+	// 'd'. There will be a panic if it is not one of 'bcdoOqxXU'
+	Verb rune
 }
 
-// getValAsInt64 converts the interface value into an int64 if possible. It
-// will set the boolean return value to false if it is not possible
-func getValAsInt64(v interface{}) (int64, bool) {
-	var i64 int64
-	var i32 int32
-	var i int
-	var ok bool
-
-	i64, ok = v.(int64)
-	if !ok {
-		i32, ok = v.(int32)
-		if ok {
-			i64 = int64(i32)
-		} else {
-			i, ok = v.(int)
-			if ok {
-				i64 = int64(i)
-			}
-		}
+// makeFormat returns a format string to be used to format the value. It uses
+// the Verb to construct the format string.
+func (f Int) makeFormat() string {
+	switch f.Verb {
+	case 0:
+		return "%d"
+	case 'b', 'c', 'd', 'o', 'O', 'q', 'x', 'X', 'U':
+		return "%" + string(f.Verb)
+	default:
+		panic(fmt.Errorf("%T: bad Format verb: %q", f, f.Verb))
 	}
-	return i64, ok
+}
+
+// isZero tests the interface value to see if it is a zero integer
+func isZero(v interface{}) bool { // nolint: gocyclo
+	switch i := v.(type) {
+	case int64:
+		return i == 0
+	case int32:
+		return i == 0
+	case int16:
+		return i == 0
+	case int8:
+		return i == 0
+	case int:
+		return i == 0
+	case uint64:
+		return i == 0
+	case uint32:
+		return i == 0
+	case uint16:
+		return i == 0
+	case uint8:
+		return i == 0
+	default:
+		return false
+	}
 }
 
 // Formatted returns the value formatted as an int
@@ -52,13 +71,13 @@ func (f Int) Formatted(v interface{}) string {
 	}
 
 	if f.HandleZeroes {
-		i64, ok := getValAsInt64(v)
-		if ok && i64 == 0 {
+		if isZero(v) {
 			return fmt.Sprintf("%.*s", f.Width(), f.ZeroReplacement)
 		}
 	}
 
-	return fmt.Sprintf("%d", v)
+	format := f.makeFormat()
+	return fmt.Sprintf(format, v)
 }
 
 // Width returns the intended width of the value
