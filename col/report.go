@@ -174,9 +174,8 @@ func (rpt *Report) printValsSkipping(skip uint, vals ...interface{}) error {
 		}
 	}
 
-	sep := rpt.skipCols(&pwe, skip)
-
 	for j := 0; j < maxLines; j++ {
+		sep := rpt.skipCols(&pwe, skip)
 		for i, v := range stringVals {
 			c := rpt.cols[i+int(skip)]
 
