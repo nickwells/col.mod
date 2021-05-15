@@ -88,7 +88,7 @@ func (h *Header) addUnderlines(cols []*Col) {
 // createHeader creates the header rows and caches them in the Header for
 // reuse if the header is to be reprinted
 func (h *Header) createHeader(cols []*Col) {
-	var sg = newSpanGrid(h, cols)
+	sg := newSpanGrid(h, cols)
 
 	if h.headerRowCount > 1 {
 		h.setSpanningCols(0, 0, len(cols)-1, sg)

@@ -45,7 +45,7 @@ type spanGrid struct {
 
 // newSpanGrid creates a new spanGrid
 func newSpanGrid(h *Header, cols []*Col) spanGrid {
-	var spans = make([][]span, h.headerRowCount)
+	spans := make([][]span, h.headerRowCount)
 	for i := range spans {
 		spans[i] = make([]span, 0, len(cols))
 	}

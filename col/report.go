@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//Report holds a collection of columns and header details
+// Report holds a collection of columns and header details
 type Report struct {
 	cols []*Col
 	hdr  *Header
@@ -43,7 +43,7 @@ func NewReportOrPanic(hdr *Header, w io.Writer, cols ...*Col) *Report {
 
 // printFooter prints the footers under the numbered columns
 func (rpt Report) printFooter(skip uint, vals ...interface{}) error {
-	var pwe = printWithErr{w: rpt.w}
+	pwe := printWithErr{w: rpt.w}
 
 	sep := rpt.skipCols(&pwe, skip)
 
@@ -147,7 +147,7 @@ func (rpt *Report) printRowSkipping(skip uint, vals ...interface{}) error {
 // printValsSkipping skips leading columns and prints the remainder. It does
 // not print the header or increment the number of rows printed
 func (rpt *Report) printValsSkipping(skip uint, vals ...interface{}) error {
-	var pwe = printWithErr{w: rpt.w}
+	pwe := printWithErr{w: rpt.w}
 
 	// first collect all the strings to be printed (these may have embedded
 	// new lines)
