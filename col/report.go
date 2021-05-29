@@ -16,7 +16,7 @@ type Report struct {
 
 // NewReport creates a new Report object.
 func NewReport(hdr *Header, w io.Writer, c *Col, cs ...*Col) *Report {
-	var cols = []*Col{c}
+	cols := []*Col{c}
 	cols = append(cols, cs...)
 
 	hdr.initVals(cols)
