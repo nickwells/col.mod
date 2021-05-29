@@ -3,7 +3,7 @@ package colfmt
 import (
 	"fmt"
 
-	"github.com/nickwells/col.mod/v2/col"
+	"github.com/nickwells/col.mod/v3/col"
 )
 
 // String records the values needed for the formatting of a

@@ -3,7 +3,7 @@ package colfmt_test
 import (
 	"testing"
 
-	"github.com/nickwells/col.mod/v2/col/colfmt"
+	"github.com/nickwells/col.mod/v3/col/colfmt"
 	"github.com/nickwells/testhelper.mod/testhelper"
 )
 

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/nickwells/col.mod/v2/col"
+	"github.com/nickwells/col.mod/v3/col"
 	"github.com/nickwells/twrap.mod/twrap"
 )
 

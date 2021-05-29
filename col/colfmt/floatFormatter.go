@@ -5,7 +5,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/nickwells/col.mod/v2/col"
+	"github.com/nickwells/col.mod/v3/col"
 )
 
 // Float records the values needed for the formatting of a

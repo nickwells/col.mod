@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/nickwells/col.mod/v2/col"
-	"github.com/nickwells/col.mod/v2/col/colfmt"
+	"github.com/nickwells/col.mod/v3/col"
+	"github.com/nickwells/col.mod/v3/col/colfmt"
 	"github.com/nickwells/testhelper.mod/testhelper"
 )
 
@@ -15,6 +15,7 @@ func TestPrintRow(t *testing.T) {
 		testhelper.ExpErr
 		data        []interface{}
 		hdrOpts     []col.HdrOptionFunc
+		c           *col.Col
 		cols        []*col.Col
 		expectedVal string
 	}{
@@ -22,9 +23,7 @@ func TestPrintRow(t *testing.T) {
 			ID:      testhelper.MkID("more data than columns"),
 			data:    []interface{}{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{},
-			cols: []*col.Col{
-				col.New(colfmt.Int{W: 3}, "an int"),
-			},
+			c:       col.New(colfmt.Int{W: 3}, "an int"),
 			ExpErr: testhelper.MkExpErr("Error printing row ",
 				"wrong number of values",
 				" Expected: ",
@@ -35,8 +34,8 @@ func TestPrintRow(t *testing.T) {
 			ID:      testhelper.MkID("3 columns - no header"),
 			data:    []interface{}{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
+			c:       col.New(&colfmt.Int{W: 3}, "an int"),
 			cols: []*col.Col{
-				col.New(&colfmt.Int{W: 3}, "an int"),
 				col.New(&colfmt.Float{W: 3}, "a float"),
 				col.New(colfmt.String{W: 3}, "string"),
 			},
@@ -47,8 +46,8 @@ func TestPrintRow(t *testing.T) {
 			ID:      testhelper.MkID("3 col - no underline"),
 			data:    []interface{}{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontUnderline},
+			c:       col.New(&colfmt.Int{W: 3}, "an int"),
 			cols: []*col.Col{
-				col.New(&colfmt.Int{W: 3}, "an int"),
 				col.New(&colfmt.Float{W: 3}, "a float"),
 				col.New(&colfmt.String{W: 3}, "string"),
 			},
@@ -61,11 +60,12 @@ func TestPrintRow(t *testing.T) {
 				"3 col, 2 header lines, 1 span (narrow) - no underline"),
 			data:    []interface{}{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontUnderline},
+			c: col.New(
+				&colfmt.Int{W: 3},
+				"first line",
+				"an int"),
+
 			cols: []*col.Col{
-				col.New(
-					&colfmt.Int{W: 3},
-					"first line",
-					"an int"),
 				col.New(
 					&colfmt.Float{W: 3},
 					"first line",
@@ -83,8 +83,8 @@ an int a float a string
 			ID:      testhelper.MkID("5 col, 3 header lines - no underline"),
 			data:    []interface{}{"c1", "c2", "c3", "c4", "c5"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontUnderline},
+			c:       col.New(colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}, "a", "b"),
 				col.New(colfmt.String{W: 3}, "a", "c"),
 				col.New(colfmt.String{W: 3}, "d"),
 				col.New(colfmt.String{W: 3}, "e", "f", "g"),
@@ -100,8 +100,8 @@ c1  c2  c3  c4  c5
 			ID:      testhelper.MkID("5 col, 3 header lines - default"),
 			data:    []interface{}{"c1", "c2", "c3", "c4", "c5"},
 			hdrOpts: []col.HdrOptionFunc{},
+			c:       col.New(colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}, "a", "b"),
 				col.New(colfmt.String{W: 3}, "a", "c"),
 				col.New(colfmt.String{W: 3}, "d"),
 				col.New(colfmt.String{W: 3}, "e", "f", "d"),
@@ -118,8 +118,8 @@ c1  c2  c3  c4  c5
 			ID:      testhelper.MkID("5 col, 3 header lines - don't span dups"),
 			data:    []interface{}{"c1", "c2", "c3", "c4", "c5"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontSpanDups},
+			c:       col.New(colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}, "a", "b"),
 				col.New(colfmt.String{W: 3}, "a", "c"),
 				col.New(colfmt.String{W: 3}, "d"),
 				col.New(colfmt.String{W: 3}, "e", "f", "d"),
@@ -142,12 +142,7 @@ c1  c2  c3  c4  c5
 			continue
 		}
 		var b bytes.Buffer
-		rpt, err := col.NewReport(h, &b, tc.cols...)
-		if err != nil {
-			t.Log(tc.IDStr())
-			t.Errorf("\t: making the Report returned an error: %s", err)
-			continue
-		}
+		rpt := col.NewReport(h, &b, tc.c, tc.cols...)
 		err = rpt.PrintRow(tc.data...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
 			testhelper.DiffString(t, tc.IDStr(), "row",
@@ -163,6 +158,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 		data        []interface{}
 		skip        uint
 		hdrOpts     []col.HdrOptionFunc
+		c           *col.Col
 		cols        []*col.Col
 		expectedVal string
 	}{
@@ -171,9 +167,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []interface{}{int64(5), float64(1.2), "test"},
 			skip:    1,
 			hdrOpts: []col.HdrOptionFunc{},
-			cols: []*col.Col{
-				col.New(colfmt.Int{W: 3}, "an int"),
-			},
+			c:       col.New(colfmt.Int{W: 3}, "an int"),
 			ExpErr: testhelper.MkExpErr("Error printing row ",
 				"too many columns to skip"),
 			expectedVal: "",
@@ -183,8 +177,8 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []interface{}{"c2", "c3", "c4", "c5"},
 			skip:    1,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
+			c:       col.New(colfmt.String{W: 3}),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
@@ -198,8 +192,8 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []interface{}{"c1", "c2", "c3", "c4", "c5"},
 			skip:    0,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
+			c:       col.New(colfmt.String{W: 3}),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
@@ -213,8 +207,8 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []interface{}{},
 			skip:    5,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
+			c:       col.New(colfmt.String{W: 3}),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
@@ -228,8 +222,8 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []interface{}{},
 			skip:    6,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
+			c:       col.New(colfmt.String{W: 3}),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
 				col.New(colfmt.String{W: 3}),
@@ -248,12 +242,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 			continue
 		}
 		var b bytes.Buffer
-		rpt, err := col.NewReport(h, &b, tc.cols...)
-		if err != nil {
-			t.Log(tc.IDStr())
-			t.Errorf("\t: making the Report returned an error: %s", err)
-			continue
-		}
+		rpt := col.NewReport(h, &b, tc.c, tc.cols...)
 		err = rpt.PrintRowSkipCols(tc.skip, tc.data...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
 			testhelper.DiffString(t, tc.IDStr(), "row",

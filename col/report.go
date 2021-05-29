@@ -3,6 +3,7 @@ package col
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -13,12 +14,10 @@ type Report struct {
 	w    io.Writer
 }
 
-// NewReport creates a new Report object. it will return a non-nil error if
-// no columns have been given.
-func NewReport(hdr *Header, w io.Writer, cols ...*Col) (*Report, error) {
-	if len(cols) == 0 {
-		return nil, fmt.Errorf("no columns have been given for this report")
-	}
+// NewReport creates a new Report object.
+func NewReport(hdr *Header, w io.Writer, c *Col, cs ...*Col) *Report {
+	var cols = []*Col{c}
+	cols = append(cols, cs...)
 
 	hdr.initVals(cols)
 	rpt := &Report{
@@ -27,18 +26,14 @@ func NewReport(hdr *Header, w io.Writer, cols ...*Col) (*Report, error) {
 		w:    w,
 	}
 
-	return rpt, nil
+	return rpt
 }
 
-// NewReportOrPanic creates a new Report object and panics if any error is
-// reported
-func NewReportOrPanic(hdr *Header, w io.Writer, cols ...*Col) *Report {
-	rpt, err := NewReport(hdr, w, cols...)
-	if err != nil {
-		panic(err)
-	}
-
-	return rpt
+// StdRpt creates a new Report object. The header used is a default value and
+// the writer used is the os.Stdout; use the NewReport or NewReportOrPanic
+// functions if you want to use other values.
+func StdRpt(c *Col, cs ...*Col) *Report {
+	return NewReport(NewHeaderOrPanic(), os.Stdout, c, cs...)
 }
 
 // printFooter prints the footers under the numbered columns

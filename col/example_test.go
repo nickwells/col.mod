@@ -5,8 +5,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/nickwells/col.mod/v2/col"
-	"github.com/nickwells/col.mod/v2/col/colfmt"
+	"github.com/nickwells/col.mod/v3/col"
+	"github.com/nickwells/col.mod/v3/col/colfmt"
 )
 
 // Example_report demonstrates how the col package might be used to generate
@@ -23,17 +23,13 @@ func Example_report() {
 
 	// Now create the report. List the columns we want giving the format
 	// types and the column headings
-	rpt, err := col.NewReport(h, os.Stdout,
+	rpt := col.NewReport(h, os.Stdout,
 		col.New(&colfmt.Int{}, "Date"),
 		col.New(&colfmt.Int{W: 2}, "Number of", "Boys"),
 		col.New(&colfmt.Int{W: 2}, "Number of", "Girls"),
 		col.New(&colfmt.Int{W: 3}, "Class", "Size"),
 		col.New(&colfmt.Float{Prec: 2}, "Ratio", "Boys-Girls"),
 	)
-	if err != nil {
-		fmt.Println("Error found while constructing the report:", err)
-		return
-	}
 
 	type rowStruct struct {
 		y     int
@@ -86,7 +82,7 @@ func Example_report2() {
 
 	// Now create the report. List the columns we want giving the format
 	// types and the column headings
-	rpt, err := col.NewReport(h, os.Stdout,
+	rpt := col.NewReport(h, os.Stdout,
 		col.New(&colfmt.Int{}, "Academic", "Year"),
 		col.New(&colfmt.Int{}, "Date"),
 		col.New(&colfmt.Int{W: 2}, "Number of", "Boys"),
@@ -94,10 +90,6 @@ func Example_report2() {
 		col.New(&colfmt.Float{Prec: 2}, "Ratio", "Boys-Girls"),
 		col.New(&colfmt.Int{W: 3}, "Class", "Size"),
 	)
-	if err != nil {
-		fmt.Println("Error found while constructing the report:", err)
-		return
-	}
 
 	type rowStruct struct {
 		year  int
