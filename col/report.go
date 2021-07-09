@@ -14,10 +14,20 @@ type Report struct {
 	w    io.Writer
 }
 
-// NewReport creates a new Report object.
+// NewReport creates a new Report object. If the header is nil, it is
+// replaced with a newly constructed default header. If the writer is nil,
+// Stdout is used.
 func NewReport(hdr *Header, w io.Writer, c *Col, cs ...*Col) *Report {
 	cols := []*Col{c}
 	cols = append(cols, cs...)
+
+	if hdr == nil {
+		hdr = NewHeaderOrPanic()
+	}
+
+	if w == nil {
+		w = os.Stdout
+	}
 
 	hdr.initVals(cols)
 	rpt := &Report{
