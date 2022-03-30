@@ -126,11 +126,10 @@ func (h *Header) createHeaderFromSpans(sg spanGrid) {
 				} else {
 					dashCount := (span.width - textWidth) / 2
 
-					h.headerRows[row] +=
-						fmt.Sprintf("%s%s%s",
-							strings.Repeat("-", dashCount),
-							span.hdrText,
-							strings.Repeat("-", span.width-textWidth-dashCount))
+					h.headerRows[row] += fmt.Sprintf("%s%s%s",
+						strings.Repeat("-", dashCount),
+						span.hdrText,
+						strings.Repeat("-", span.width-textWidth-dashCount))
 				}
 			} else {
 				c := sg.cols[span.start]
