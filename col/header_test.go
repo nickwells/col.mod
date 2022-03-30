@@ -3,7 +3,7 @@ package col
 import (
 	"testing"
 
-	"github.com/nickwells/testhelper.mod/testhelper"
+	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
 // rowsAreEqual compares h with h2 and returns true if all the fields

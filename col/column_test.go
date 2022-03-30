@@ -6,7 +6,7 @@ import (
 
 	"github.com/nickwells/col.mod/v3/col"
 	"github.com/nickwells/col.mod/v3/col/colfmt"
-	"github.com/nickwells/testhelper.mod/testhelper"
+	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
 func TestPrintRow(t *testing.T) {
