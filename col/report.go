@@ -47,7 +47,7 @@ func StdRpt(c *Col, cs ...*Col) *Report {
 }
 
 // printFooter prints the footers under the numbered columns
-func (rpt Report) printFooter(skip uint, vals ...interface{}) error {
+func (rpt Report) printFooter(skip uint, vals ...any) error {
 	pwe := printWithErr{w: rpt.w}
 
 	sep := rpt.skipCols(&pwe, skip)
@@ -77,7 +77,7 @@ type printWithErr struct {
 
 // print uses fmt.Fprint to print the vals if no error has been found. It
 // prints to the io.Writer of the printWithErr object.
-func (pwe *printWithErr) print(vals ...interface{}) {
+func (pwe *printWithErr) print(vals ...any) {
 	if pwe.err == nil {
 		_, pwe.err = fmt.Fprint(pwe.w, vals...)
 	}
@@ -85,7 +85,7 @@ func (pwe *printWithErr) print(vals ...interface{}) {
 
 // println uses fmt.Fprintln to print the vals if no error has been found. It
 // prints to the io.Writer of the printWithErr object.
-func (pwe *printWithErr) println(vals ...interface{}) {
+func (pwe *printWithErr) println(vals ...any) {
 	if pwe.err == nil {
 		_, pwe.err = fmt.Fprintln(pwe.w, vals...)
 	}
@@ -103,7 +103,7 @@ type Skip struct{}
 // PrintRow will print the values according to the specification of each
 // corresponding column. It will also print the header as specified. It will
 // return an error if there are not the same number of values as columns.
-func (rpt *Report) PrintRow(vals ...interface{}) error {
+func (rpt *Report) PrintRow(vals ...any) error {
 	if len(vals) != len(rpt.cols) {
 		return fmt.Errorf(
 			"Error printing row %d: wrong number of values."+
@@ -120,7 +120,7 @@ func (rpt *Report) PrintRow(vals ...interface{}) error {
 // will skip the first columns as specified. The most likely use for this is
 // if you have several leading columns you want to skip. To skip individual
 // columns you can use a col.Skip{}
-func (rpt *Report) PrintRowSkipCols(skip uint, vals ...interface{}) error {
+func (rpt *Report) PrintRowSkipCols(skip uint, vals ...any) error {
 	if int(skip) >= len(rpt.cols) {
 		return fmt.Errorf(
 			"Error printing row %d: too many columns to skip: %d of %d",
@@ -141,7 +141,7 @@ func (rpt *Report) PrintRowSkipCols(skip uint, vals ...interface{}) error {
 
 // printRowSkipping skips leading columns and prints the remainder. It prints
 // the header as necessary and increments the number of rows printed
-func (rpt *Report) printRowSkipping(skip uint, vals ...interface{}) error {
+func (rpt *Report) printRowSkipping(skip uint, vals ...any) error {
 	defer rpt.hdr.incrDataRowsPrinted()
 
 	rpt.hdr.printHeader(rpt.w, rpt.cols)
@@ -151,7 +151,7 @@ func (rpt *Report) printRowSkipping(skip uint, vals ...interface{}) error {
 
 // printValsSkipping skips leading columns and prints the remainder. It does
 // not print the header or increment the number of rows printed
-func (rpt *Report) printValsSkipping(skip uint, vals ...interface{}) error {
+func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
 	pwe := printWithErr{w: rpt.w}
 
 	// first collect all the strings to be printed (these may have embedded
@@ -212,7 +212,7 @@ func (rpt *Report) skipCols(pwe *printWithErr, skip uint) string {
 // PrintFooterVals prints values for the footer. It does not print the header
 // or increment the number of rows printed. It will print Header.underlineCh
 // characters under the columns being printed
-func (rpt Report) PrintFooterVals(skip uint, vals ...interface{}) error {
+func (rpt Report) PrintFooterVals(skip uint, vals ...any) error {
 	if int(skip) >= len(rpt.cols) {
 		return fmt.Errorf(
 			"Error printing footer after row %d:"+

@@ -11,7 +11,7 @@ func TestIntFormatter(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		intF   colfmt.Int
-		val    interface{}
+		val    any
 		expStr string
 	}{
 		{

@@ -22,7 +22,7 @@ type String struct {
 }
 
 // Formatted returns the value formatted as a string
-func (f String) Formatted(v interface{}) string {
+func (f String) Formatted(v any) string {
 	if f.IgnoreNil && v == nil {
 		return ""
 	}

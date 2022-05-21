@@ -117,11 +117,11 @@ func Example_report2() {
 		totGirls += v.girls
 		tot := v.boys + v.girls
 		ratio := float64(v.boys) / float64(v.girls)
-		var ratioVal interface{}
+		var ratioVal any
 		if ratio >= 1.005 || ratio <= 0.995 {
-			ratioVal = interface{}(ratio)
+			ratioVal = any(ratio)
 		} else {
-			ratioVal = interface{}(col.Skip{})
+			ratioVal = any(col.Skip{})
 		}
 		if v.year == lastYear {
 			// This illustrates the use of the PrintRowSkipCols func. Note

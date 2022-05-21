@@ -23,7 +23,7 @@ func (fzh *FloatZeroHandler) setEpsilon(prec int) {
 // GetZeroStr calculates the appropriate zero string and returns it with a
 // boolean indicating whether it should be used or not (if the value passed
 // was actually zero)
-func (fzh *FloatZeroHandler) GetZeroStr(prec int, v interface{}) (bool, string) {
+func (fzh *FloatZeroHandler) GetZeroStr(prec int, v any) (bool, string) {
 	if fzh != nil && fzh.Handle {
 		fzh.setEpsilon(prec)
 		f64, ok := getValAsFloat64(v)

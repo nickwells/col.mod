@@ -21,7 +21,7 @@ type Time struct {
 
 // Formatted returns the value formatted as a time. If the format string is
 // not set then it is set to the DfltTimeFormat.
-func (f *Time) Formatted(v interface{}) string {
+func (f *Time) Formatted(v any) string {
 	if f.IgnoreNil && v == nil {
 		return ""
 	}

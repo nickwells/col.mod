@@ -21,7 +21,7 @@ type WrappedString struct {
 // Formatted returns the value formatted as a string. The string is wrapped
 // to a maximum length of WrappedString.W and any trailing newlines are
 // trimmed
-func (f WrappedString) Formatted(v interface{}) string {
+func (f WrappedString) Formatted(v any) string {
 	if f.IgnoreNil && v == nil {
 		return ""
 	}

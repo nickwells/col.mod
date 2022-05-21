@@ -13,7 +13,7 @@ func TestPrintRow(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		testhelper.ExpErr
-		data        []interface{}
+		data        []any
 		hdrOpts     []col.HdrOptionFunc
 		c           *col.Col
 		cols        []*col.Col
@@ -21,7 +21,7 @@ func TestPrintRow(t *testing.T) {
 	}{
 		{
 			ID:      testhelper.MkID("more data than columns"),
-			data:    []interface{}{int64(5), float64(1.2), "test"},
+			data:    []any{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{},
 			c:       col.New(colfmt.Int{W: 3}, "an int"),
 			ExpErr: testhelper.MkExpErr("Error printing row ",
@@ -32,7 +32,7 @@ func TestPrintRow(t *testing.T) {
 		},
 		{
 			ID:      testhelper.MkID("3 columns - no header"),
-			data:    []interface{}{int64(5), float64(1.2), "test"},
+			data:    []any{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
 			c:       col.New(&colfmt.Int{W: 3}, "an int"),
 			cols: []*col.Col{
@@ -44,7 +44,7 @@ func TestPrintRow(t *testing.T) {
 		},
 		{
 			ID:      testhelper.MkID("3 col - no underline"),
-			data:    []interface{}{int64(5), float64(1.2), "test"},
+			data:    []any{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontUnderline},
 			c:       col.New(&colfmt.Int{W: 3}, "an int"),
 			cols: []*col.Col{
@@ -58,7 +58,7 @@ func TestPrintRow(t *testing.T) {
 		{
 			ID: testhelper.MkID(
 				"3 col, 2 header lines, 1 span (narrow) - no underline"),
-			data:    []interface{}{int64(5), float64(1.2), "test"},
+			data:    []any{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontUnderline},
 			c: col.New(
 				&colfmt.Int{W: 3},
@@ -81,7 +81,7 @@ an int a float a string
 		},
 		{
 			ID:      testhelper.MkID("5 col, 3 header lines - no underline"),
-			data:    []interface{}{"c1", "c2", "c3", "c4", "c5"},
+			data:    []any{"c1", "c2", "c3", "c4", "c5"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontUnderline},
 			c:       col.New(colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
@@ -98,7 +98,7 @@ c1  c2  c3  c4  c5
 		},
 		{
 			ID:      testhelper.MkID("5 col, 3 header lines - default"),
-			data:    []interface{}{"c1", "c2", "c3", "c4", "c5"},
+			data:    []any{"c1", "c2", "c3", "c4", "c5"},
 			hdrOpts: []col.HdrOptionFunc{},
 			c:       col.New(colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
@@ -116,7 +116,7 @@ c1  c2  c3  c4  c5
 		},
 		{
 			ID:      testhelper.MkID("5 col, 3 header lines - don't span dups"),
-			data:    []interface{}{"c1", "c2", "c3", "c4", "c5"},
+			data:    []any{"c1", "c2", "c3", "c4", "c5"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontSpanDups},
 			c:       col.New(colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
@@ -155,7 +155,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		testhelper.ExpErr
-		data        []interface{}
+		data        []any
 		skip        uint
 		hdrOpts     []col.HdrOptionFunc
 		c           *col.Col
@@ -164,7 +164,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 	}{
 		{
 			ID:      testhelper.MkID("more data than col"),
-			data:    []interface{}{int64(5), float64(1.2), "test"},
+			data:    []any{int64(5), float64(1.2), "test"},
 			skip:    1,
 			hdrOpts: []col.HdrOptionFunc{},
 			c:       col.New(colfmt.Int{W: 3}, "an int"),
@@ -174,7 +174,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 		},
 		{
 			ID:      testhelper.MkID("5 col, no header - skip 1"),
-			data:    []interface{}{"c2", "c3", "c4", "c5"},
+			data:    []any{"c2", "c3", "c4", "c5"},
 			skip:    1,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
 			c:       col.New(colfmt.String{W: 3}),
@@ -189,7 +189,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 		},
 		{
 			ID:      testhelper.MkID("5 col, no header - skip 0"),
-			data:    []interface{}{"c1", "c2", "c3", "c4", "c5"},
+			data:    []any{"c1", "c2", "c3", "c4", "c5"},
 			skip:    0,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
 			c:       col.New(colfmt.String{W: 3}),
@@ -204,7 +204,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 		},
 		{
 			ID:      testhelper.MkID("5 col, no header - skip all"),
-			data:    []interface{}{},
+			data:    []any{},
 			skip:    5,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
 			c:       col.New(colfmt.String{W: 3}),
@@ -219,7 +219,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 		},
 		{
 			ID:      testhelper.MkID("5 col, no header - skip too many"),
-			data:    []interface{}{},
+			data:    []any{},
 			skip:    6,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
 			c:       col.New(colfmt.String{W: 3}),

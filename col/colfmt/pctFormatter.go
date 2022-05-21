@@ -25,7 +25,7 @@ type Percent struct {
 }
 
 // Formatted returns the value formatted as a percentage
-func (f *Percent) Formatted(v interface{}) string {
+func (f *Percent) Formatted(v any) string {
 	if v == nil {
 		if f.IgnoreNil {
 			return ""

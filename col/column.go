@@ -20,7 +20,7 @@ const DfltColSep = " "
 // in the col/colfmt package. These should cover many common requirements.
 type Formatter interface {
 	// Formatted should return the value as a string
-	Formatted(interface{}) string
+	Formatted(any) string
 	// Width should return the expected width of the string printed with the
 	// format string. Note that the actual width of the string may be greater
 	// than this depending on the width of the column header

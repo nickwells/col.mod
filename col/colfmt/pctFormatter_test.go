@@ -11,7 +11,7 @@ func TestPctFormatter(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		pf     colfmt.Percent
-		val    interface{}
+		val    any
 		expStr string
 	}{
 		{

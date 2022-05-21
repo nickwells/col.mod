@@ -11,7 +11,7 @@ func TestFloatFormatter(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		ff     colfmt.Float
-		val    interface{}
+		val    any
 		expStr string
 	}{
 		{

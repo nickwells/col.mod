@@ -36,7 +36,7 @@ type Float struct {
 // the Verb to construct the format string. It also consults the magnitude of
 // the value and the ReformatOutOfBoundValues flag to decide whether to use a
 // different format.
-func (f Float) makeFormat(v interface{}) string {
+func (f Float) makeFormat(v any) string {
 	format := ""
 	switch f.Verb {
 	case 0, 'f', 'F':
@@ -77,7 +77,7 @@ func (f Float) trimTrailingZeros(s string) string {
 }
 
 // Formatted returns the value formatted as a float
-func (f *Float) Formatted(v interface{}) string {
+func (f *Float) Formatted(v any) string {
 	if f.IgnoreNil && v == nil {
 		return ""
 	}

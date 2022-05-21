@@ -39,7 +39,7 @@ func (f Int) makeFormat() string {
 }
 
 // isZero tests the interface value to see if it is a zero integer
-func isZero(v interface{}) bool { // nolint: gocyclo
+func isZero(v any) bool { // nolint: gocyclo
 	switch i := v.(type) {
 	case int64:
 		return i == 0
@@ -65,7 +65,7 @@ func isZero(v interface{}) bool { // nolint: gocyclo
 }
 
 // Formatted returns the value formatted as an int
-func (f Int) Formatted(v interface{}) string {
+func (f Int) Formatted(v any) string {
 	if f.IgnoreNil && v == nil {
 		return ""
 	}
