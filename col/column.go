@@ -6,8 +6,9 @@ import "fmt"
 type Justification int
 
 // The justification types:
-//    Left means left-justified
-//    Right means right-justified
+//
+//	Left means left-justified
+//	Right means right-justified
 const (
 	Left Justification = iota
 	Right

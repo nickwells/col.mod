@@ -4,9 +4,9 @@ package col
 // row all having the same header text and all belonging to the same span in
 // the row above. For instance given the following columns:
 //
-//     Column number: 1         2          3
-//             row 1: average   average    total
-//             row 2: height    weight     income
+//	Column number: 1         2          3
+//	        row 1: average   average    total
+//	        row 2: height    weight     income
 //
 // columns 1 and 2 form a span in row 1. Column 3 in row 1 and all columns in
 // row 2 are single-column spans where the start and end fields are the same.

@@ -11,7 +11,6 @@ import (
 // or, if the header is periodically repeated, it could be used, for instance,
 // to print sub-totals. The int64 parameter passes the number of data rows
 // printed, if this is zero then the header is being printed for the first time
-//
 type PreHdrFunc func(io.Writer, uint64)
 
 // Header holds the parameters which control how and when the header is printed
