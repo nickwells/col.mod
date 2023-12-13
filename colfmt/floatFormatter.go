@@ -5,17 +5,17 @@ import (
 	"math"
 	"strings"
 
-	"github.com/nickwells/col.mod/v3/col"
+	"github.com/nickwells/col.mod/v4/col"
 )
 
 // Float records the values needed for the formatting of a
 // float(64/32) value
 type Float struct {
 	// W gives the minimum space to be taken by the formatted value
-	W int
+	W uint
 	// Prec gives the precision with which to print the value when formatted
 	// Negative values are treated as zero
-	Prec int
+	Prec uint
 	// IgnoreNil, if set to true will make nil values print as the empty string
 	IgnoreNil bool
 	// Zeroes records any desired special handling for zero values
@@ -45,7 +45,7 @@ func (f Float) makeFormat(v any) string {
 			f64, ok := getValAsFloat64(v)
 			if ok &&
 				(f64 < math.Pow(10, -float64(f.Prec)) ||
-					f64 > math.Pow(10, float64(f.Width()-f.Prec))) {
+					f64 > math.Pow(10, float64(f.Width())-float64(f.Prec))) {
 				format = "%.*g"
 			}
 		}
@@ -82,9 +82,6 @@ func (f *Float) Formatted(v any) string {
 		return ""
 	}
 
-	if f.Prec < 0 {
-		f.Prec = 0
-	}
 	format := f.makeFormat(v)
 
 	if ok, str := f.Zeroes.GetZeroStr(f.Prec, v); ok {
@@ -95,8 +92,8 @@ func (f *Float) Formatted(v any) string {
 
 // Width returns the intended width of the value. An invalid width or one
 // incompatible with the given precision is ignored
-func (f Float) Width() int {
-	minWidth := 1
+func (f Float) Width() uint {
+	var minWidth uint = 1
 	if f.Prec > 0 {
 		minWidth++ // for the decimal place
 		minWidth += f.Prec
@@ -112,4 +109,15 @@ func (f Float) Width() int {
 // Just returns the justification of the value
 func (f Float) Just() col.Justification {
 	return col.Right
+}
+
+// Check returns a non-nil error if the Formatter has an invalid Verb
+func (f Float) Check() error {
+	switch f.Verb {
+	case 0, 'f', 'F', 'e', 'E', 'g', 'G', 'x', 'X':
+	default:
+		return fmt.Errorf("%T: bad Format verb: %q", f, f.Verb)
+	}
+
+	return nil
 }

@@ -3,7 +3,7 @@ package colfmt_test
 import (
 	"testing"
 
-	"github.com/nickwells/col.mod/v3/col/colfmt"
+	"github.com/nickwells/col.mod/v4/colfmt"
 	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
@@ -110,17 +110,10 @@ func TestIntWidth(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		intF     colfmt.Int
-		expWidth int
+		expWidth uint
 	}{
 		{
 			ID:       testhelper.MkID("zero width"),
-			expWidth: 1,
-		},
-		{
-			ID: testhelper.MkID("-ve width"),
-			intF: colfmt.Int{
-				W: -1,
-			},
 			expWidth: 1,
 		},
 		{

@@ -3,7 +3,7 @@ package colfmt
 import (
 	"fmt"
 
-	"github.com/nickwells/col.mod/v3/col"
+	"github.com/nickwells/col.mod/v4/col"
 )
 
 // Percent records the values needed for the formatting of a proportion as a
@@ -12,10 +12,9 @@ import (
 // is added to the end (unless SuppressPct is set to true)
 type Percent struct {
 	// W gives the minimum space to be taken by the formatted value
-	W int
+	W uint
 	// Prec gives the precision with which to print the value when formatted
-	// Negative values are treated as zero
-	Prec int
+	Prec uint
 	// IgnoreNil, if set to true will make nil values print as the empty string
 	IgnoreNil bool
 	// SuppressPct, if set to true will cause the '%' sign not to be printed
@@ -31,10 +30,6 @@ func (f *Percent) Formatted(v any) string {
 			return ""
 		}
 		return "nil"
-	}
-
-	if f.Prec < 0 {
-		f.Prec = 0
 	}
 
 	var pct float64
@@ -59,8 +54,8 @@ func (f *Percent) Formatted(v any) string {
 
 // Width returns the intended width of the value. An invalid width or one
 // incompatible with the given precision is ignored
-func (f Percent) Width() int {
-	minWidth := 1
+func (f Percent) Width() uint {
+	var minWidth uint = 1
 	if !f.SuppressPct {
 		minWidth++ // for the % sign
 	}
@@ -80,4 +75,9 @@ func (f Percent) Width() int {
 // Just returns the justification of the value
 func (f Percent) Just() col.Justification {
 	return col.Right
+}
+
+// Check returns a nil error
+func (f Percent) Check() error {
+	return nil
 }

@@ -1,6 +1,7 @@
 package col
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -17,9 +18,13 @@ type Report struct {
 // NewReport creates a new Report object. If the header is nil, it is
 // replaced with a newly constructed default header. If the writer is nil,
 // Stdout is used.
-func NewReport(hdr *Header, w io.Writer, c *Col, cs ...*Col) *Report {
+func NewReport(hdr *Header, w io.Writer, c *Col, cs ...*Col) (*Report, error) {
 	cols := []*Col{c}
 	cols = append(cols, cs...)
+	err := checkColumns(cols)
+	if err != nil {
+		return nil, err
+	}
 
 	if hdr == nil {
 		hdr = NewHeaderOrPanic()
@@ -30,20 +35,44 @@ func NewReport(hdr *Header, w io.Writer, c *Col, cs ...*Col) *Report {
 	}
 
 	hdr.initVals(cols)
-	rpt := &Report{
+	return &Report{
 		cols: cols,
 		hdr:  hdr,
 		w:    w,
-	}
+	}, nil
+}
 
-	return rpt
+// NewReportOrPanic returns a new Report object. If an error was returned
+// when the Report was created then this will panic.
+func NewReportOrPanic(hdr *Header, w io.Writer, c *Col, cs ...*Col) *Report {
+	r, err := NewReport(hdr, w, c, cs...)
+	if err != nil {
+		panic(err)
+	}
+	return r
 }
 
 // StdRpt creates a new Report object. The header used is a default value and
-// the writer used is the os.Stdout; use the NewReport or NewReportOrPanic
-// functions if you want to use other values.
+// the writer used is the os.Stdout; use the NewReport function if you want
+// to use other values. Any errors will cause this to panic.
 func StdRpt(c *Col, cs ...*Col) *Report {
-	return NewReport(NewHeaderOrPanic(), os.Stdout, c, cs...)
+	return NewReportOrPanic(NewHeaderOrPanic(), os.Stdout, c, cs...)
+}
+
+// checkColumns runs the Formatter's Check function for each Col and returns
+// an error if any of them returns a non-nil error.
+func checkColumns(cols []*Col) error {
+	var allErrs []error
+	for i, c := range cols {
+		err := c.f.Check()
+		if err != nil {
+			allErrs = append(allErrs,
+				fmt.Errorf("column[%d] (%q) has a bad Formatter: %w",
+					i, c.headers, err))
+		}
+	}
+
+	return errors.Join(allErrs...)
 }
 
 // printFooter prints the footers under the numbered columns
@@ -60,7 +89,7 @@ func (rpt Report) printFooter(skip uint, vals ...any) error {
 
 		text := ""
 		if _, ok := v.(Skip); !ok {
-			text = strings.Repeat(rpt.hdr.underlineCh, c.finalWidth)
+			text = strings.Repeat(rpt.hdr.underlineCh, int(c.finalWidth))
 		}
 		pwe.print(c.stringInCol(text))
 	}

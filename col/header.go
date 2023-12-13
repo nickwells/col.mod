@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"unicode"
 )
 
 // PreHdrFunc is the signature of a function to be called immediately before
@@ -19,7 +20,7 @@ type Header struct {
 	headerRows        []string
 	dataRowsPrinted   uint64
 	repeatHdrInterval uint64
-	headerRowCount    int
+	headerRowCount    uint
 	preHeaderFunc     PreHdrFunc
 	spanDups          bool
 	printHdr          bool
@@ -37,8 +38,8 @@ func (h *Header) initVals(cols []*Col) {
 	}
 
 	for _, c := range cols {
-		if len(c.headers) > h.headerRowCount {
-			h.headerRowCount = len(c.headers)
+		if uint(len(c.headers)) > h.headerRowCount {
+			h.headerRowCount = uint(len(c.headers))
 		}
 	}
 	h.headerRows = make([]string, h.headerRowCount)
@@ -46,7 +47,7 @@ func (h *Header) initVals(cols []*Col) {
 
 // setSpanningCols populates the spans slice with any columns in the
 // range start to end which are spanning in the given row
-func (h *Header) setSpanningCols(row, start, end int, sg spanGrid) {
+func (h *Header) setSpanningCols(row, start, end uint, sg spanGrid) {
 	span := span{
 		start:   start,
 		end:     start,
@@ -90,9 +91,9 @@ func (h *Header) createHeader(cols []*Col) {
 	sg := newSpanGrid(h, cols)
 
 	if h.headerRowCount > 1 {
-		h.setSpanningCols(0, 0, len(cols)-1, sg)
+		h.setSpanningCols(0, 0, uint(len(cols)-1), sg)
 
-		for row := 1; row < h.headerRowCount-1; row++ {
+		for row := uint(1); row < h.headerRowCount-1; row++ {
 			for _, span := range sg.spans[row-1] {
 				h.setSpanningCols(row, span.start, span.end, sg)
 			}
@@ -111,9 +112,10 @@ func (h *Header) createHeader(cols []*Col) {
 }
 
 func (h *Header) createHeaderFromSpans(sg spanGrid) {
-	for row := 0; row < h.headerRowCount; row++ {
+	for row := uint(0); row < h.headerRowCount; row++ {
 		sep := ""
 		for _, span := range sg.spans[row] {
+			sWidth := int(span.width)
 			h.headerRows[row] += sep
 			sep = strings.Repeat(" ", len(sg.cols[span.end].sep))
 
@@ -121,14 +123,14 @@ func (h *Header) createHeaderFromSpans(sg spanGrid) {
 				textWidth := len(span.hdrText)
 
 				if textWidth == 0 {
-					h.headerRows[row] += fmt.Sprintf("%*s", span.width, "")
+					h.headerRows[row] += fmt.Sprintf("%*s", sWidth, "")
 				} else {
-					dashCount := (span.width - textWidth) / 2
+					dashCount := (sWidth - textWidth) / 2
 
 					h.headerRows[row] += fmt.Sprintf("%s%s%s",
 						strings.Repeat("-", dashCount),
 						span.hdrText,
-						strings.Repeat("-", span.width-textWidth-dashCount))
+						strings.Repeat("-", sWidth-textWidth-dashCount))
 				}
 			} else {
 				c := sg.cols[span.start]
@@ -198,23 +200,28 @@ func HdrOptDontUnderline(h *Header) error {
 }
 
 // HdrOptUnderlineWith returns a HdrOptionFunc that will set the rune used to
-// underline the final header line
+// underline the final header line. Note that the given rune must be
+// printable. When the header is printed it is assumed that all characters
+// are of the same width; if this is not the case then the underlining will
+// not line up nicely with the columns.
 func HdrOptUnderlineWith(r rune) HdrOptionFunc {
 	return func(h *Header) error {
+		if !unicode.IsPrint(r) {
+			return fmt.Errorf(
+				"the header underline rune (%U) must be printable", r)
+		}
 		h.underlineCh = string(r)
 		return nil
 	}
 }
 
-// HdrOptRepeat returns a HdrOptionFunc that will set the number of
-// lines of data that should be printed before the header is printed again. If
-// this value is not set then the header is only printed once
+// HdrOptRepeat returns a HdrOptionFunc that will set the number of lines of
+// data that should be printed before the header is printed again. If this
+// value is not set then the header is only printed once
 func HdrOptRepeat(n uint64) HdrOptionFunc {
 	return func(h *Header) error {
 		if n < 1 {
-			return fmt.Errorf(
-				"the value for repeating the header must be >= 1: %d",
-				n)
+			return fmt.Errorf("the header repeat count (%d) must be >= 1", n)
 		}
 		h.repeatHdrInterval = n
 		return nil

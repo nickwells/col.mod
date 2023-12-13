@@ -1,4 +1,4 @@
-module github.com/nickwells/col.mod/v3
+module github.com/nickwells/col.mod/v4
 
 go 1.18
 

@@ -17,12 +17,8 @@ func getValAsFloat64(v any) (float64, bool) {
 }
 
 // calcEpsilon calculates the appropriate epsilon value for the given precision
-func calcEpsilon(prec int) float64 {
-	scale := prec
-	if scale < 0 {
-		scale = 0
-	}
-	scale++
+func calcEpsilon(prec uint) float64 {
+	scale := int(prec) + 1
 	scale *= -1
 	return 5.0 * math.Pow10(scale)
 }

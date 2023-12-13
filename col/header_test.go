@@ -80,11 +80,18 @@ func TestHdrCreate(t *testing.T) {
 	repeatHdr3 := dfltHdr
 	repeatHdr3.repeatHdrInterval = 3
 
+	const (
+		badHdrRepeat    = "the header repeat count (0) must be >= 1"
+		badHdrUnderline = "the header underline rune (U+0000) must be printable"
+	)
+
 	testCases := []struct {
 		testhelper.ID
 		testhelper.ExpErr
-		hdrOpts     []HdrOptionFunc
-		expectedHdr Header
+		testhelper.ExpPanic
+		hdrOpts         []HdrOptionFunc
+		expectedHdr     Header
+		expHeaderOutput string
 	}{
 		{
 			ID:          testhelper.MkID("default"),
@@ -117,14 +124,24 @@ func TestHdrCreate(t *testing.T) {
 			expectedHdr: repeatHdr3,
 		},
 		{
-			ID:      testhelper.MkID("bad repeat header: zero"),
-			hdrOpts: []HdrOptionFunc{HdrOptRepeat(0)},
-			ExpErr: testhelper.MkExpErr(
-				"the value for repeating the header must be >= 1"),
+			ID:       testhelper.MkID("bad repeat header: zero"),
+			hdrOpts:  []HdrOptionFunc{HdrOptRepeat(0)},
+			ExpErr:   testhelper.MkExpErr(badHdrRepeat),
+			ExpPanic: testhelper.MkExpPanic(badHdrRepeat),
+		},
+		{
+			ID:       testhelper.MkID("bad underline rune"),
+			hdrOpts:  []HdrOptionFunc{HdrOptUnderlineWith(rune(0))},
+			ExpErr:   testhelper.MkExpErr(badHdrUnderline),
+			ExpPanic: testhelper.MkExpPanic(badHdrUnderline),
 		},
 	}
 
 	for _, tc := range testCases {
+		panicked, panicVal := testhelper.PanicSafe(func() {
+			_ = NewHeaderOrPanic(tc.hdrOpts...)
+		})
+		testhelper.CheckExpPanicError(t, panicked, panicVal, tc)
 		h, err := NewHeader(tc.hdrOpts...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
 			if !h.isEqual(tc.expectedHdr) {
@@ -132,6 +149,7 @@ func TestHdrCreate(t *testing.T) {
 				t.Logf("\t: expected header: %v\n", tc.expectedHdr)
 				t.Logf("\t:   actual header: %v\n", h)
 				t.Error("\t: header is incorrect\n")
+				continue
 			}
 		}
 	}

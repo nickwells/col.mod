@@ -3,7 +3,7 @@ package colfmt_test
 import (
 	"testing"
 
-	"github.com/nickwells/col.mod/v3/col/colfmt"
+	"github.com/nickwells/col.mod/v4/colfmt"
 	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
@@ -58,12 +58,6 @@ func TestPctFormatter(t *testing.T) {
 			pf:     colfmt.Percent{Prec: 2},
 			val:    1.2345,
 			expStr: "123.45%",
-		},
-		{
-			ID:     testhelper.MkID("with bad precision"),
-			pf:     colfmt.Percent{Prec: -1},
-			val:    1.2345,
-			expStr: "123%",
 		},
 		{
 			ID: testhelper.MkID("with zero handling, large (just) value"),
@@ -174,7 +168,7 @@ func TestPercentWidth(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		pf       colfmt.Percent
-		expWidth int
+		expWidth uint
 	}{
 		{
 			ID:       testhelper.MkID("default"),

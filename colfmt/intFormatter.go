@@ -3,13 +3,13 @@ package colfmt
 import (
 	"fmt"
 
-	"github.com/nickwells/col.mod/v3/col"
+	"github.com/nickwells/col.mod/v4/col"
 )
 
 // Int records the values needed for the formatting of an int value
 type Int struct {
 	// W gives the minimum space to be taken by the formatted value
-	W int
+	W uint
 	// IgnoreNil, if set to true will make nil values print as the empty string
 	IgnoreNil bool
 	// HandleZeroes, if set to true will check if the value to be printed is
@@ -81,8 +81,8 @@ func (f Int) Formatted(v any) string {
 }
 
 // Width returns the intended width of the value
-func (f Int) Width() int {
-	if f.W <= 0 {
+func (f Int) Width() uint {
+	if f.W == 0 {
 		return 1
 	}
 	return f.W
@@ -91,4 +91,14 @@ func (f Int) Width() int {
 // Just returns the justification of the value
 func (f Int) Just() col.Justification {
 	return col.Right
+}
+
+// Check returns a non-nil error if the Verb is invalid
+func (f Int) Check() error {
+	switch f.Verb {
+	case 0, 'b', 'c', 'd', 'o', 'O', 'q', 'x', 'X', 'U':
+	default:
+		return fmt.Errorf("%T: bad Format verb: %q", f, f.Verb)
+	}
+	return nil
 }

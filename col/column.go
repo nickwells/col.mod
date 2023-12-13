@@ -16,27 +16,11 @@ const (
 
 const DfltColSep = " "
 
-// Formatter is an interface which describes the methods to be provided by a
-// column formatter. Various instances of the Formatter interface are given
-// in the col/colfmt package. These should cover many common requirements.
-type Formatter interface {
-	// Formatted should return the value as a string
-	Formatted(any) string
-	// Width should return the expected width of the string printed with the
-	// format string. Note that the actual width of the string may be greater
-	// than this depending on the width of the column header
-	Width() int
-	// Just should return whether the resultant string is left or right
-	// justified. This information is needed when deciding how to print the
-	// header
-	Just() Justification
-}
-
 // Col holds the values needed in order to represent a column
 type Col struct {
 	headers    []string
 	f          Formatter
-	finalWidth int
+	finalWidth uint
 	sep        string
 }
 
@@ -67,13 +51,12 @@ func (c *Col) SetSep(s string) *Col {
 // hdrText returns the text of the header corresponding to the given row
 // If the row is before the start of the headers for that column then the
 // empty string is returned
-func (c Col) hdrText(rowIdx, rowCount int) string {
-	val := ""
-	valIdx := len(c.headers) - rowCount + rowIdx
-	if valIdx >= 0 && valIdx < len(c.headers) {
-		val = c.headers[valIdx]
+func (c Col) hdrText(rowIdx, rowCount uint) string {
+	valIdx := len(c.headers) - int(rowCount) + int(rowIdx)
+	if valIdx < 0 || valIdx >= len(c.headers) {
+		return ""
 	}
-	return val
+	return c.headers[valIdx]
 }
 
 // stringInCol returns the string s formatted to fit in the column

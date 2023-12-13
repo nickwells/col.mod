@@ -5,26 +5,21 @@ import (
 	"io"
 	"os"
 
-	"github.com/nickwells/col.mod/v3/col"
-	"github.com/nickwells/col.mod/v3/col/colfmt"
+	"github.com/nickwells/col.mod/v4/col"
+	"github.com/nickwells/col.mod/v4/colfmt"
 )
 
 // Example_report demonstrates how the col package might be used to generate
 // a report. Notice how we have multi-line column headings and how common
 // header text is shared between adjacent columns (this makes for more
-// concise reports)
+// concise reports). This uses the StdRpt func to create the report; this is
+// suitable when no special header handling is needed and the report should
+// be written to os.Stdout. Note that StdRpt will panic if any columns are
+// incorrectly created.
 func Example_report() {
-	// First, create the header
-	h, err := col.NewHeader()
-	if err != nil {
-		fmt.Println("Error found while constructing the header:", err)
-		return
-	}
-
 	// Now create the report. List the columns we want giving the format
 	// types and the column headings
-	rpt := col.NewReport(h, os.Stdout,
-		col.New(&colfmt.Int{}, "Date"),
+	rpt := col.StdRpt(col.New(&colfmt.Int{}, "Date"),
 		col.New(&colfmt.Int{W: 2}, "Number of", "Boys"),
 		col.New(&colfmt.Int{W: 2}, "Number of", "Girls"),
 		col.New(&colfmt.Int{W: 3}, "Class", "Size"),
@@ -41,12 +36,13 @@ func Example_report() {
 		{y: 2012, boys: 12, girls: 16},
 		{y: 2013, boys: 13, girls: 13},
 	} {
-		err = rpt.PrintRow(v.y,
+		err := rpt.PrintRow(v.y,
 			v.boys, v.girls,
 			v.boys+v.girls,
 			float64(v.boys)/float64(v.girls))
 		if err != nil {
-			fmt.Println("Error found while printing the report:", err)
+			fmt.Println("Unexpected error found while printing a row:",
+				err)
 			break
 		}
 	}
@@ -76,13 +72,13 @@ func Example_report2() {
 		col.HdrOptUnderlineWith('-'),
 	)
 	if err != nil {
-		fmt.Println("Error found while constructing the header:", err)
+		fmt.Println("Unexpected error found while building the Header:", err)
 		return
 	}
 
 	// Now create the report. List the columns we want giving the format
 	// types and the column headings
-	rpt := col.NewReport(h, os.Stdout,
+	rpt, err := col.NewReport(h, os.Stdout,
 		col.New(&colfmt.Int{}, "Academic", "Year"),
 		col.New(&colfmt.Int{}, "Date"),
 		col.New(&colfmt.Int{W: 2}, "Number of", "Boys"),
@@ -90,6 +86,10 @@ func Example_report2() {
 		col.New(&colfmt.Float{Prec: 2}, "Ratio", "Boys-Girls"),
 		col.New(&colfmt.Int{W: 3}, "Class", "Size"),
 	)
+	if err != nil {
+		fmt.Println("Unexpected error found while building the Report:", err)
+		return
+	}
 
 	type rowStruct struct {
 		year  int
@@ -133,7 +133,8 @@ func Example_report2() {
 			err = rpt.PrintRow(v.year, v.date, v.boys, v.girls, ratioVal, tot)
 		}
 		if err != nil {
-			fmt.Println("Error found while printing the report:", err)
+			fmt.Println("Unexpected error found while printing a row:",
+				err)
 			break
 		}
 		lastYear = v.year
@@ -144,7 +145,8 @@ func Example_report2() {
 	avgClassSize := (totBoys + totGirls) / count
 	err = rpt.PrintFooterVals(2, totBoys, totGirls, ratio, avgClassSize)
 	if err != nil {
-		fmt.Println("Error found while printing the report footer:", err)
+		fmt.Println("Unexpected error found while printing the report footer:",
+			err)
 	}
 	// Output:
 	// A report on the variation in class sizes over time

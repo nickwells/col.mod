@@ -3,14 +3,14 @@ package colfmt
 import (
 	"fmt"
 
-	"github.com/nickwells/col.mod/v3/col"
+	"github.com/nickwells/col.mod/v4/col"
 )
 
 // String records the values needed for the formatting of a
 // string value.
 type String struct {
 	// W gives the minimum width of the string that should be printed
-	W int
+	W uint
 	// MaxW gives the maximum width of the string, if it is set to zero then
 	// no limit is applied. If it is set to a negative value then the W
 	// value is used. If it is a positive value then that is used
@@ -38,11 +38,16 @@ func (f String) Formatted(v any) string {
 }
 
 // Width returns the intended width of the value
-func (f String) Width() int {
+func (f String) Width() uint {
 	return f.W
 }
 
 // Just returns the justification of the value
 func (f String) Just() col.Justification {
 	return f.StrJust
+}
+
+// Check returns a nil error
+func (f String) Check() error {
+	return nil
 }

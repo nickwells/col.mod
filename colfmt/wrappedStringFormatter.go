@@ -2,9 +2,10 @@ package colfmt
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 
-	"github.com/nickwells/col.mod/v3/col"
+	"github.com/nickwells/col.mod/v4/col"
 	"github.com/nickwells/twrap.mod/twrap"
 )
 
@@ -13,7 +14,7 @@ import (
 type WrappedString struct {
 	// W gives the width of the block that the string should fit within. This
 	// must be set to some non-zero value.
-	W int
+	W uint
 	// IgnoreNil, if set to true will make nil values print as the empty string
 	IgnoreNil bool
 }
@@ -26,10 +27,14 @@ func (f WrappedString) Formatted(v any) string {
 		return ""
 	}
 
+	width := int(f.W)
+	if width == 0 {
+		width = 1
+	}
 	var b bytes.Buffer
 	twc := twrap.NewTWConfOrPanic(
-		twrap.SetTargetLineLen(f.W),
-		twrap.SetMinChars(f.W),
+		twrap.SetTargetLineLen(width),
+		twrap.SetMinChars(width),
 		twrap.SetWriter(&b))
 
 	twc.Wrap(v.(string), 0)
@@ -38,11 +43,22 @@ func (f WrappedString) Formatted(v any) string {
 }
 
 // Width returns the intended width of the value
-func (f WrappedString) Width() int {
+func (f WrappedString) Width() uint {
+	if f.W == 0 {
+		return 1
+	}
 	return f.W
 }
 
 // Just returns the justification of the value
 func (f WrappedString) Just() col.Justification {
 	return col.Left
+}
+
+// Check returns a non-nil error if the parameters are invalid
+func (f WrappedString) Check() error {
+	if f.W == 0 {
+		return fmt.Errorf("the width (%d) must be > 0", f.W)
+	}
+	return nil
 }

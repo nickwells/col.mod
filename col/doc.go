@@ -15,5 +15,8 @@ a list of one or more columns.
 
 Then to make use of all your work above you call the PrintRow... methods on the
 report object that you just created.
+
+It will work best with fixed-width fonts and character sets where all the
+characters have the same width.
 */
 package col

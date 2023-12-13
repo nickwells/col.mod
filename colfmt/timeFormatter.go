@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/nickwells/col.mod/v3/col"
+	"github.com/nickwells/col.mod/v4/col"
 )
 
 // DfltTimeFormat is the format that will be used by the Time Formatter for
@@ -14,7 +14,7 @@ const DfltTimeFormat = "2006/01/02 15:04:05.000"
 
 // Time records the values needed for the formatting of a time value
 type Time struct {
-	W         int
+	W         uint
 	Format    string
 	IgnoreNil bool
 }
@@ -40,12 +40,12 @@ func (f *Time) Formatted(v any) string {
 // the length of the format string is used as a reasonable (but imperfect)
 // value. If the format string is not set then it is set to the
 // DfltTimeFormat before the width is calculated.
-func (f *Time) Width() int {
+func (f *Time) Width() uint {
 	if f.W == 0 {
 		if f.Format == "" {
 			f.Format = DfltTimeFormat
 		}
-		f.W = len(f.Format)
+		f.W = uint(len(f.Format))
 	}
 	return f.W
 }
@@ -53,4 +53,9 @@ func (f *Time) Width() int {
 // Just returns the justification of the value
 func (f Time) Just() col.Justification {
 	return col.Left
+}
+
+// Check returns a nil error
+func (f Time) Check() error {
+	return nil
 }

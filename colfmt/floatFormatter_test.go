@@ -3,7 +3,7 @@ package colfmt_test
 import (
 	"testing"
 
-	"github.com/nickwells/col.mod/v3/col/colfmt"
+	"github.com/nickwells/col.mod/v4/colfmt"
 	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
@@ -39,12 +39,6 @@ func TestFloatFormatter(t *testing.T) {
 			ff:     colfmt.Float{Prec: 2},
 			val:    1.2345,
 			expStr: "1.23",
-		},
-		{
-			ID:     testhelper.MkID("with bad precision"),
-			ff:     colfmt.Float{Prec: -1},
-			val:    1.2345,
-			expStr: "1",
 		},
 		{
 			ID: testhelper.MkID("with zero handling, large (just) value"),
@@ -158,7 +152,7 @@ func TestFloatWidth(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		ff       colfmt.Float
-		expWidth int
+		expWidth uint
 	}{
 		{
 			ID:       testhelper.MkID("default"),
