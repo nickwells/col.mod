@@ -38,14 +38,28 @@ type Float struct {
 // different format.
 func (f Float) makeFormat(v any) string {
 	format := ""
+
 	switch f.Verb {
 	case 0, 'f', 'F':
 		format = "%.*f"
+
 		if f.ReformatOutOfBoundValues {
+			if f.Prec > math.MaxInt {
+				panic(fmt.Errorf(
+					"the precision (%d) is too big, the maximum value is %d",
+					f.Prec, math.MaxInt))
+			}
+
+			if f.Width() > math.MaxInt {
+				panic(fmt.Errorf(
+					"the width (%d) is too big, the maximum value is %d",
+					f.Width(), math.MaxInt))
+			}
+
 			f64, ok := getValAsFloat64(v)
 			if ok &&
-				(f64 < math.Pow(10, -float64(f.Prec)) ||
-					f64 > math.Pow(10, float64(f.Width())-float64(f.Prec))) {
+				(f64 < math.Pow10(-int(f.Prec)) ||
+					f64 > math.Pow10(int(f.Width())-int(f.Prec))) { //nolint:gosec
 				format = "%.*g"
 			}
 		}

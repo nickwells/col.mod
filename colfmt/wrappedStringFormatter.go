@@ -27,10 +27,17 @@ func (f WrappedString) Formatted(v any) string {
 		return ""
 	}
 
-	width := int(f.W)
+	if f.W > math.MaxInt {
+		panic(fmt.Errorf(
+			"the width (%d) is too big, the maximum value is %d",
+			f.W, math.MaxInt))
+	}
+
+	width := int(f.W) //nolint:gosec
 	if width == 0 {
 		width = 1
 	}
+
 	var b bytes.Buffer
 	twc := twrap.NewTWConfOrPanic(
 		twrap.SetTargetLineLen(width),
