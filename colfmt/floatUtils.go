@@ -18,7 +18,14 @@ func getValAsFloat64(v any) (float64, bool) {
 
 // calcEpsilon calculates the appropriate epsilon value for the given precision
 func calcEpsilon(prec uint) float64 {
-	scale := int(prec) + 1
+	if prec > math.MaxInt-1 {
+		panic(fmt.Errorf(
+			"The precision value (%d) is too big, the maximum value is %d",
+			prec, math.MaxInt-1))
+	}
+
+	scale := int(prec) + 1 //nolint:gosec
 	scale *= -1
-	return 5.0 * math.Pow10(scale)
+
+	return 5.0 * math.Pow10(scale) //nolint:mnd
 }

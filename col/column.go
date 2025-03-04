@@ -52,10 +52,11 @@ func (c *Col) SetSep(s string) *Col {
 // If the row is before the start of the headers for that column then the
 // empty string is returned
 func (c Col) hdrText(rowIdx, rowCount uint) string {
-	valIdx := len(c.headers) - int(rowCount) + int(rowIdx)
+	valIdx := len(c.headers) - int(rowCount) + int(rowIdx) //nolint:gosec
 	if valIdx < 0 || valIdx >= len(c.headers) {
 		return ""
 	}
+
 	return c.headers[valIdx]
 }
 

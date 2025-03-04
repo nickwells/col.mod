@@ -82,13 +82,16 @@ func (sg spanGrid) setWidths() {
 
 // setWidthsFromSpansBelow works out the width of each span in each row
 func (sg spanGrid) setWidthsFromSpansBelow() {
-	for row := len(sg.spans) - 2; row >= 0; row-- {
+	for row := len(sg.spans) - 2; row >= 0; row-- { //nolint:mnd
 		for i, span := range sg.spans[row] {
 			w := span.minWidth()
-			nextRowWidth := sg.totalWidth(uint(row+1), span.start, span.end)
+
+			nextRowWidth := sg.totalWidth(
+				uint(row+1), span.start, span.end) //nolint:gosec
 			if nextRowWidth > w {
 				w = nextRowWidth
 			}
+
 			span.width = w
 			sg.spans[row][i] = span
 		}
@@ -98,7 +101,7 @@ func (sg spanGrid) setWidthsFromSpansBelow() {
 func (sg spanGrid) setWidthsFromSpansAbove() {
 	for row := 1; row <= len(sg.spans)-1; row++ {
 		for _, span := range sg.spans[row-1] {
-			w := sg.totalWidth(uint(row), span.start, span.end)
+			w := sg.totalWidth(uint(row), span.start, span.end) //nolint:gosec
 			if span.width > w {
 				// adjust the span widths below to take account of any extra
 				// space from the spanning columns above
@@ -130,7 +133,9 @@ func (sg spanGrid) setWidthsFromSpansAbove() {
 
 // setLastRowOfHeader sets the initial value of the last row of the header.
 // This is the (non-underline) row just above the data values in the printed
-// report and we do not span these headings so there is one entry per column
+// report and we do not span these headings so there is one entry per column.
+//
+//nolint:gosec
 func (sg spanGrid) setLastRowOfHeader() {
 	row := len(sg.spans) - 1
 	for i, c := range sg.cols {

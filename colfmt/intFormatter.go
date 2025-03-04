@@ -39,7 +39,11 @@ func (f Int) makeFormat() string {
 }
 
 // isZero tests the interface value to see if it is a zero integer
-func isZero(v any) bool { // nolint: gocyclo
+//
+//nolint:cyclop
+func isZero(v any) bool {
+	// Sadly we need this long list of switch types 'cause otherwise the 'i'
+	// value remains as an 'any' and the test fails
 	switch i := v.(type) {
 	case int64:
 		return i == 0

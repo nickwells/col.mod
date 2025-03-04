@@ -82,15 +82,18 @@ func (rpt Report) printFooter(skip uint, vals ...any) error {
 	sep := rpt.skipCols(&pwe, skip)
 
 	for i, v := range vals {
-		c := rpt.cols[i+int(skip)]
+		c := rpt.cols[i+int(skip)] //nolint:gosec
 
 		pwe.print(sep)
 		sep = c.sep
 
 		text := ""
 		if _, ok := v.(Skip); !ok {
-			text = strings.Repeat(rpt.hdr.underlineCh, int(c.finalWidth))
+			text = strings.Repeat(
+				rpt.hdr.underlineCh,
+				int(c.finalWidth)) //nolint:gosec
 		}
+
 		pwe.print(c.stringInCol(text))
 	}
 
@@ -152,7 +155,7 @@ func (rpt *Report) PrintRow(vals ...any) error {
 // if you have several leading columns you want to skip. To skip individual
 // columns you can use a col.Skip{}
 func (rpt *Report) PrintRowSkipCols(skip uint, vals ...any) error {
-	if int(skip) >= len(rpt.cols) {
+	if int(skip) >= len(rpt.cols) { //nolint:gosec
 		return fmt.Errorf(
 			"PrintRowSkipCols(called from: %s):"+
 				" Error printing row %d: too many columns to skip: %d of %d",
@@ -160,7 +163,7 @@ func (rpt *Report) PrintRowSkipCols(skip uint, vals ...any) error {
 			rpt.hdr.dataRowsPrinted+1, skip, len(rpt.cols))
 	}
 
-	if len(vals)+int(skip) != len(rpt.cols) {
+	if len(vals)+int(skip) != len(rpt.cols) { //nolint:gosec
 		return fmt.Errorf(
 			"PrintRowSkipCols(called from: %s):"+
 				" Error printing row %d: wrong number of values."+
@@ -168,7 +171,10 @@ func (rpt *Report) PrintRowSkipCols(skip uint, vals ...any) error {
 				" Expected: %d,"+
 				" Received: %d",
 			caller(),
-			rpt.hdr.dataRowsPrinted+1, skip, len(rpt.cols)-int(skip), len(vals))
+			rpt.hdr.dataRowsPrinted+1,
+			skip,
+			len(rpt.cols)-int(skip), //nolint:gosec
+			len(vals))
 	}
 
 	return rpt.printRowSkipping(skip, vals...)
@@ -193,20 +199,28 @@ func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
 	// new lines)
 
 	var stringVals [][]string
+
 	maxLines := 0
+
 	for i, v := range vals {
-		c := rpt.cols[i+int(skip)]
+		c := rpt.cols[i+int(skip)] //nolint:gosec
 		str := ""
+
 		if _, ok := v.(Skip); !ok {
 			str = c.f.Formatted(v)
 		}
+
 		lines := strings.Split(str, "\n")
+
 		if len(lines) > maxLines {
 			maxLines = len(lines)
 		}
+
 		stringVals = append(stringVals, lines)
 	}
+
 	blanks := make([]string, maxLines)
+
 	for i, lines := range stringVals {
 		if len(lines) < maxLines {
 			lines = append(lines, blanks[:maxLines-len(lines)]...)
@@ -214,16 +228,18 @@ func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
 		}
 	}
 
-	for j := 0; j < maxLines; j++ {
+	for j := range maxLines {
 		sep := rpt.skipCols(&pwe, skip)
+
 		for i, v := range stringVals {
-			c := rpt.cols[i+int(skip)]
+			c := rpt.cols[i+int(skip)] //nolint:gosec
 
 			pwe.print(sep)
 			sep = c.sep
 
 			pwe.print(c.stringInCol(v[j]))
 		}
+
 		pwe.println()
 	}
 
@@ -248,7 +264,7 @@ func (rpt *Report) skipCols(pwe *printWithErr, skip uint) string {
 // or increment the number of rows printed. It will print Header.underlineCh
 // characters under the columns being printed
 func (rpt Report) PrintFooterVals(skip uint, vals ...any) error {
-	if int(skip) >= len(rpt.cols) {
+	if int(skip) >= len(rpt.cols) { //nolint:gosec
 		return fmt.Errorf(
 			"PrintFooterVals(called from: %s):"+
 				" Error printing footer after row %d:"+
@@ -257,7 +273,7 @@ func (rpt Report) PrintFooterVals(skip uint, vals ...any) error {
 			rpt.hdr.dataRowsPrinted, skip, len(rpt.cols))
 	}
 
-	if len(vals)+int(skip) != len(rpt.cols) {
+	if len(vals)+int(skip) != len(rpt.cols) { //nolint:gosec
 		return fmt.Errorf(
 			"PrintFooterVals(called from: %s):"+
 				" Error printing footer after row %d: wrong number of values."+
@@ -265,7 +281,10 @@ func (rpt Report) PrintFooterVals(skip uint, vals ...any) error {
 				" Expected: %d,"+
 				" Received: %d",
 			caller(),
-			rpt.hdr.dataRowsPrinted, skip, len(rpt.cols)-int(skip), len(vals))
+			rpt.hdr.dataRowsPrinted,
+			skip,
+			len(rpt.cols)-int(skip), //nolint:gosec
+			len(vals))
 	}
 
 	err := rpt.printFooter(skip, vals...)
