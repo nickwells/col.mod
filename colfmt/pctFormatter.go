@@ -35,26 +35,47 @@ func (f *Percent) Formatted(v any) string {
 		if f.IgnoreNil {
 			return ""
 		}
-		return "nil"
-	}
 
-	var pct float64
-	switch flt := v.(type) {
-	case float64:
-		pct = flt * 100
-	case float32:
-		pct = float64(flt) * 100
-	default:
-		return fmt.Sprintf("%.*f", f.Prec, v)
-	}
-	if ok, str := f.Zeroes.GetZeroStr(f.Prec, pct); ok {
-		return fmt.Sprintf("%.*s", f.Width(), str)
+		return "nil"
 	}
 
 	pctSign := "%%"
 	if f.SuppressPct {
 		pctSign = ""
 	}
+
+	var pct float64
+	switch flt := v.(type) {
+	case float64:
+		pct = mathutil.ToPercent(flt)
+	case float32:
+		pct = float64(mathutil.ToPercent(flt))
+	case int64:
+		pct = mathutil.ToPercent(float64(flt))
+	case int32:
+		pct = mathutil.ToPercent(float64(flt))
+	case int16:
+		pct = mathutil.ToPercent(float64(flt))
+	case int8:
+		pct = mathutil.ToPercent(float64(flt))
+	case int:
+		pct = mathutil.ToPercent(float64(flt))
+	case uint64:
+		pct = mathutil.ToPercent(float64(flt))
+	case uint32:
+		pct = mathutil.ToPercent(float64(flt))
+	case uint16:
+		pct = mathutil.ToPercent(float64(flt))
+	case uint8:
+		pct = mathutil.ToPercent(float64(flt))
+	default:
+		return fmt.Sprintf("Numeric value expected (got: %T): %v", v, v)
+	}
+
+	if ok, str := f.Zeroes.GetZeroStr(f.Prec, pct); ok {
+		return fmt.Sprintf("%.*s", f.Width(), str)
+	}
+
 	return fmt.Sprintf("%.*f"+pctSign, f.Prec, pct)
 }
 
