@@ -1,6 +1,6 @@
 module github.com/nickwells/col.mod/v4
 
-go 1.18
+go 1.24
 
 require (
 	github.com/nickwells/testhelper.mod/v2 v2.3.0
