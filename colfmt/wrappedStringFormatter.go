@@ -3,6 +3,7 @@ package colfmt
 import (
 	"bytes"
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/nickwells/col.mod/v4/col"
@@ -54,6 +55,7 @@ func (f WrappedString) Width() uint {
 	if f.W == 0 {
 		return 1
 	}
+
 	return f.W
 }
 
@@ -67,5 +69,6 @@ func (f WrappedString) Check() error {
 	if f.W == 0 {
 		return fmt.Errorf("the width (%d) must be > 0", f.W)
 	}
+
 	return nil
 }

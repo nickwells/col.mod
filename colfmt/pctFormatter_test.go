@@ -36,11 +36,12 @@ func TestPctFormatter(t *testing.T) {
 		{
 			ID:     testhelper.MkID("basic, pass int"),
 			val:    int(123),
-			expStr: "%!f(int=123)",
+			expStr: "12300%",
 		},
 		{
-			ID:     testhelper.MkID("basic, pass nil"),
-			expStr: "nil",
+			ID:     testhelper.MkID("basic, pass non-float / non-int"),
+			val:    "not a number",
+			expStr: "Numeric value expected (got: string): not a number",
 		},
 		{
 			ID:     testhelper.MkID("ignore nil, pass a value"),

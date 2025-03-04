@@ -49,6 +49,7 @@ func newSpanGrid(h *Header, cols []*Col) spanGrid {
 	for i := range spans {
 		spans[i] = make([]span, 0, len(cols))
 	}
+
 	return spanGrid{
 		spans: spans,
 		cols:  cols,
@@ -60,17 +61,22 @@ func newSpanGrid(h *Header, cols []*Col) spanGrid {
 // span after end and adds extra space for every gap between spans
 func (sg spanGrid) totalWidth(row, start, end uint) uint {
 	var w uint
+
 	var gapIncr uint
+
 	for _, span := range sg.spans[row] {
 		if span.end < start {
 			continue
 		}
+
 		if span.start > end {
 			break
 		}
+
 		w += gapIncr + span.width
 		gapIncr = uint(len(sg.cols[span.end].sep))
 	}
+
 	return w
 }
 
@@ -114,16 +120,20 @@ func (sg spanGrid) setWidthsFromSpansAbove() {
 					if spanBelow.end < span.start {
 						continue
 					}
+
 					if spanBelow.start > span.end {
 						break
 					}
 
 					count := 1 + spanBelow.end - spanBelow.start
+
 					spanBelow.width += (count * perCol)
+
 					if oneExtraCount > 0 {
 						spanBelow.width += count
 						oneExtraCount -= count
 					}
+
 					sg.spans[row][i] = spanBelow
 				}
 			}
@@ -150,6 +160,7 @@ func (sg spanGrid) setLastRowOfHeader() {
 		if len(span.hdrText) > int(span.width) {
 			span.width = uint(len(span.hdrText))
 		}
+
 		sg.spans[row] = append(sg.spans[row], span)
 	}
 }

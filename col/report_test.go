@@ -13,6 +13,7 @@ func TestNewReport(t *testing.T) {
 		badFormatVerb = " has a bad Formatter: colfmt.Int: bad Format verb: '😀'"
 		badCol0       = `column[0] (["bad" "formatter"])` + badFormatVerb
 	)
+
 	testCases := []struct {
 		testhelper.ID
 		testhelper.ExpErr
@@ -51,11 +52,14 @@ func TestNewReport(t *testing.T) {
 	for _, tc := range testCases {
 		newRpt, err := col.NewReport(nil, nil, tc.col1, tc.cols...)
 		testhelper.CheckExpErr(t, err, tc)
+
 		var stdRpt *col.Report
+
 		panicked, panicVal := testhelper.PanicSafe(func() {
 			stdRpt = col.StdRpt(tc.col1, tc.cols...)
 		})
 		testhelper.CheckExpPanicError(t, panicked, panicVal, tc)
+
 		err = testhelper.DiffVals(newRpt, stdRpt)
 		if err != nil {
 			t.Log(tc.IDStr())

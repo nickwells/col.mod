@@ -68,6 +68,7 @@ func (f Float) makeFormat(v any) string {
 	default:
 		panic(fmt.Errorf("%T: bad Format verb: %q", f, f.Verb))
 	}
+
 	return format
 }
 
@@ -80,6 +81,7 @@ func (f Float) trimTrailingZeros(s string) string {
 
 	r := []rune(s)
 	postPointIdx := strings.LastIndex(s, ".")
+
 	for i := len(s) - 1; i > postPointIdx+1; i-- {
 		if r[i] == '0' {
 			r[i] = ' '
@@ -87,6 +89,7 @@ func (f Float) trimTrailingZeros(s string) string {
 			break
 		}
 	}
+
 	return string(r)
 }
 
@@ -101,6 +104,7 @@ func (f *Float) Formatted(v any) string {
 	if ok, str := f.Zeroes.GetZeroStr(f.Prec, v); ok {
 		return fmt.Sprintf("%.*s", f.Width(), str)
 	}
+
 	return f.trimTrailingZeros(fmt.Sprintf(format, f.Prec, v))
 }
 

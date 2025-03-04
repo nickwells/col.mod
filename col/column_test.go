@@ -216,26 +216,33 @@ c1  c2  c3  c4  c5
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: making the Header returned an error: %s", err)
+
 			continue
 		}
+
 		var b bytes.Buffer
+
 		rpt, err := col.NewReport(h, &b, tc.c, tc.cols...)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: making the report returned an error: %s", err)
+
 			continue
 		}
+
 		err = rpt.PrintRow(tc.data...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
-			for i := 0; i < tc.extraRows; i++ {
+			for i := range tc.extraRows {
 				err = rpt.PrintRow(tc.data...)
 				if err != nil {
 					t.Log(tc.IDStr())
 					t.Errorf("\t: unexpected error printing row %d: %s",
 						i+2, err)
+
 					break
 				}
 			}
+
 			testhelper.DiffString(t, tc.IDStr(), "row",
 				(&b).String(), tc.expectedVal)
 		}
@@ -348,15 +355,20 @@ func TestPrintRowSkipCols(t *testing.T) {
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: making the Header returned an error: %s", err)
+
 			continue
 		}
+
 		var b bytes.Buffer
+
 		rpt, err := col.NewReport(h, &b, tc.c, tc.cols...)
 		if err != nil {
 			t.Log(tc.IDStr())
 			t.Errorf("\t: making the Report returned an error: %s", err)
+
 			continue
 		}
+
 		err = rpt.PrintRowSkipCols(tc.skip, tc.data...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
 			testhelper.DiffString(t, tc.IDStr(), "row",

@@ -31,6 +31,7 @@ func Example_report() {
 		boys  int
 		girls int
 	}
+
 	for _, v := range []rowStruct{
 		{y: 2011, boys: 14, girls: 13},
 		{y: 2012, boys: 12, girls: 16},
@@ -117,12 +118,15 @@ func Example_report2() {
 		totGirls += v.girls
 		tot := v.boys + v.girls
 		ratio := float64(v.boys) / float64(v.girls)
+
 		var ratioVal any
+
 		if ratio >= 1.005 || ratio <= 0.995 {
 			ratioVal = any(ratio)
 		} else {
 			ratioVal = any(col.Skip{})
 		}
+
 		if v.year == lastYear {
 			// This illustrates the use of the PrintRowSkipCols func. Note
 			// that this could equally have been done by passing col.Skip{}
@@ -132,17 +136,21 @@ func Example_report2() {
 		} else {
 			err = rpt.PrintRow(v.year, v.date, v.boys, v.girls, ratioVal, tot)
 		}
+
 		if err != nil {
 			fmt.Println("Unexpected error found while printing a row:",
 				err)
+
 			break
 		}
+
 		lastYear = v.year
 	}
 
 	// now print the column totals using PrintFooterVals
 	ratio := float64(totBoys) / float64(totGirls)
 	avgClassSize := (totBoys + totGirls) / count
+
 	err = rpt.PrintFooterVals(2, totBoys, totGirls, ratio, avgClassSize)
 	if err != nil {
 		fmt.Println("Unexpected error found while printing the report footer:",

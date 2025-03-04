@@ -33,6 +33,7 @@ func (f *Time) Formatted(v any) string {
 	if t, ok := v.(time.Time); ok {
 		return t.Format(f.Format)
 	}
+
 	return fmt.Sprintf("Not a time: %v", v)
 }
 
@@ -45,8 +46,10 @@ func (f *Time) Width() uint {
 		if f.Format == "" {
 			f.Format = DfltTimeFormat
 		}
+
 		f.W = uint(len(f.Format))
 	}
+
 	return f.W
 }
 

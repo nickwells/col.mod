@@ -42,6 +42,7 @@ func (h *Header) initVals(cols []*Col) {
 			h.headerRowCount = uint(len(c.headers))
 		}
 	}
+
 	h.headerRows = make([]string, h.headerRowCount)
 }
 
@@ -54,6 +55,7 @@ func (h *Header) setSpanningCols(row, start, end uint, sg spanGrid) {
 		row:     row,
 		hdrText: sg.cols[start].hdrText(row, h.headerRowCount),
 	}
+
 	for i := start + 1; i <= end; i++ {
 		hdrText := sg.cols[i].hdrText(row, h.headerRowCount)
 		if span.hdrText == hdrText && h.spanDups {
@@ -66,6 +68,7 @@ func (h *Header) setSpanningCols(row, start, end uint, sg spanGrid) {
 			span.hdrText = hdrText
 		}
 	}
+
 	sg.spans[row] = append(sg.spans[row], span)
 }
 
@@ -75,12 +78,14 @@ func (h *Header) addUnderlines(cols []*Col) {
 	if h.underlineHdr {
 		underline := ""
 		sep := ""
+
 		for _, c := range cols {
 			underline += sep
 			sep = strings.Repeat(" ", len(c.sep))
 			s := c.headers[len(c.headers)-1]
 			underline += c.stringInCol(strings.Repeat(h.underlineCh, len(s)))
 		}
+
 		h.headerRows = append(h.headerRows, underline)
 	}
 }
@@ -112,8 +117,9 @@ func (h *Header) createHeader(cols []*Col) {
 }
 
 func (h *Header) createHeaderFromSpans(sg spanGrid) {
-	for row := uint(0); row < h.headerRowCount; row++ {
+	for row := range h.headerRowCount {
 		sep := ""
+
 		for _, span := range sg.spans[row] {
 			sWidth := int(span.width) //nolint:gosec
 			h.headerRows[row] += sep
@@ -152,6 +158,7 @@ func (h *Header) printHeader(w io.Writer, cols []*Col) {
 		if h.repeatHdrInterval == 0 {
 			return
 		}
+
 		if h.dataRowsPrinted%h.repeatHdrInterval != 0 {
 			return
 		}
@@ -162,6 +169,7 @@ func (h *Header) printHeader(w io.Writer, cols []*Col) {
 	if h.preHeaderFunc != nil {
 		h.preHeaderFunc(w, h.dataRowsPrinted)
 	}
+
 	for _, hr := range h.headerRows {
 		fmt.Fprintln(w, hr)
 	}
@@ -211,7 +219,9 @@ func HdrOptUnderlineWith(r rune) HdrOptionFunc {
 			return fmt.Errorf(
 				"the header underline rune (%U) must be printable", r)
 		}
+
 		h.underlineCh = string(r)
+
 		return nil
 	}
 }
@@ -224,7 +234,9 @@ func HdrOptRepeat(n uint64) HdrOptionFunc {
 		if n < 1 {
 			return fmt.Errorf("the header repeat count (%d) must be >= 1", n)
 		}
+
 		h.repeatHdrInterval = n
+
 		return nil
 	}
 }

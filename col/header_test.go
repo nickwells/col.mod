@@ -12,11 +12,13 @@ func (h Header) rowsAreEqual(h2 Header) bool {
 	if len(h.headerRows) != len(h2.headerRows) {
 		return false
 	}
+
 	for i, r := range h.headerRows {
 		if r != h2.headerRows[i] {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -26,30 +28,39 @@ func (h Header) isEqual(h2 Header) bool {
 	if h.underlineCh != h2.underlineCh {
 		return false
 	}
+
 	if len(h.headerRows) != len(h2.headerRows) {
 		return false
 	}
+
 	if h.dataRowsPrinted != h2.dataRowsPrinted {
 		return false
 	}
+
 	if h.repeatHdrInterval != h2.repeatHdrInterval {
 		return false
 	}
+
 	if h.headerRowCount != h2.headerRowCount {
 		return false
 	}
+
 	if h.printHdr != h2.printHdr {
 		return false
 	}
+
 	if h.hdrPrinted != h2.hdrPrinted {
 		return false
 	}
+
 	if h.underlineHdr != h2.underlineHdr {
 		return false
 	}
+
 	if !h.rowsAreEqual(h2) {
 		return false
 	}
+
 	return true
 }
 
@@ -142,6 +153,7 @@ func TestHdrCreate(t *testing.T) {
 			_ = NewHeaderOrPanic(tc.hdrOpts...)
 		})
 		testhelper.CheckExpPanicError(t, panicked, panicVal, tc)
+
 		h, err := NewHeader(tc.hdrOpts...)
 		if testhelper.CheckExpErr(t, err, tc) && err == nil {
 			if !h.isEqual(tc.expectedHdr) {
@@ -149,6 +161,7 @@ func TestHdrCreate(t *testing.T) {
 				t.Logf("\t: expected header: %v\n", tc.expectedHdr)
 				t.Logf("\t:   actual header: %v\n", h)
 				t.Error("\t: header is incorrect\n")
+
 				continue
 			}
 		}

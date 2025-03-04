@@ -1,6 +1,9 @@
 package colfmt
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 // getValAsFloat64 converts the interface value into a float64 if
 // possible. It will set the boolean return value to false if it is not
@@ -9,6 +12,7 @@ func getValAsFloat64(v any) (float64, bool) {
 	if f64, ok := v.(float64); ok {
 		return f64, true
 	}
+
 	if f32, ok := v.(float32); ok {
 		return float64(f32), true
 	}

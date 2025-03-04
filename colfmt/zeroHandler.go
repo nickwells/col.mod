@@ -26,6 +26,7 @@ func (fzh *FloatZeroHandler) setEpsilon(prec uint) {
 func (fzh *FloatZeroHandler) GetZeroStr(prec uint, v any) (bool, string) {
 	if fzh != nil && fzh.Handle {
 		fzh.setEpsilon(prec)
+
 		f64, ok := getValAsFloat64(v)
 		if ok &&
 			((prec > 0 && f64 < fzh.epsilon && f64 > (-1*fzh.epsilon)) ||
@@ -33,5 +34,6 @@ func (fzh *FloatZeroHandler) GetZeroStr(prec uint, v any) (bool, string) {
 			return true, fzh.Replace
 		}
 	}
+
 	return false, ""
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/nickwells/col.mod/v4/col"
+	"github.com/nickwells/mathutil.mod/v2/mathutil"
 )
 
 // Percent records the values needed for the formatting of a proportion as a

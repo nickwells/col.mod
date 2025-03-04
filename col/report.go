@@ -20,7 +20,9 @@ type Report struct {
 // Stdout is used.
 func NewReport(hdr *Header, w io.Writer, c *Col, cs ...*Col) (*Report, error) {
 	cols := []*Col{c}
+
 	cols = append(cols, cs...)
+
 	err := checkColumns(cols)
 	if err != nil {
 		return nil, err
@@ -35,6 +37,7 @@ func NewReport(hdr *Header, w io.Writer, c *Col, cs ...*Col) (*Report, error) {
 	}
 
 	hdr.initVals(cols)
+
 	return &Report{
 		cols: cols,
 		hdr:  hdr,
@@ -49,6 +52,7 @@ func NewReportOrPanic(hdr *Header, w io.Writer, c *Col, cs ...*Col) *Report {
 	if err != nil {
 		panic(err)
 	}
+
 	return r
 }
 
@@ -63,6 +67,7 @@ func StdRpt(c *Col, cs ...*Col) *Report {
 // an error if any of them returns a non-nil error.
 func checkColumns(cols []*Col) error {
 	var allErrs []error
+
 	for i, c := range cols {
 		err := c.f.Check()
 		if err != nil {
@@ -249,6 +254,7 @@ func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
 // skipCols skips leading columns
 func (rpt *Report) skipCols(pwe *printWithErr, skip uint) string {
 	sep := ""
+
 	for i := uint(0); i < skip; i++ {
 		c := rpt.cols[i]
 
@@ -257,6 +263,7 @@ func (rpt *Report) skipCols(pwe *printWithErr, skip uint) string {
 
 		pwe.print(c.stringInCol(""))
 	}
+
 	return sep
 }
 

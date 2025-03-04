@@ -81,6 +81,7 @@ func (f Int) Formatted(v any) string {
 	}
 
 	format := f.makeFormat()
+
 	return fmt.Sprintf(format, v)
 }
 
@@ -89,6 +90,7 @@ func (f Int) Width() uint {
 	if f.W == 0 {
 		return 1
 	}
+
 	return f.W
 }
 
@@ -104,5 +106,6 @@ func (f Int) Check() error {
 	default:
 		return fmt.Errorf("%T: bad Format verb: %q", f, f.Verb)
 	}
+
 	return nil
 }

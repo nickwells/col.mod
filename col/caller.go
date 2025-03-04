@@ -12,13 +12,16 @@ import (
 // of the call to caller() but we want to see where the parent function was
 // called so we pass 2
 func caller() string {
-	if pc, file, line, ok := runtime.Caller(2); ok {
-		f := runtime.FuncForPC(pc)
+	const parentCallerIdx = 2
+
+	if pc, file, line, ok := runtime.Caller(parentCallerIdx); ok {
 		funcName := "unknown"
-		if f != nil {
+		if f := runtime.FuncForPC(pc); f != nil {
 			funcName = f.Name()
 		}
+
 		return fmt.Sprintf("%s:%d [%s]", file, line, funcName)
 	}
+
 	return "unknown-file:0 [unknown]"
 }

@@ -22,6 +22,7 @@ func (f Bool) Formatted(v any) string {
 	if f.IgnoreNil && v == nil {
 		return ""
 	}
+
 	return fmt.Sprintf("%t", v)
 }
 
