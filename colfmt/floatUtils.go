@@ -24,7 +24,7 @@ func getValAsFloat64(v any) (float64, bool) {
 func calcEpsilon(prec uint) float64 {
 	if prec > math.MaxInt-1 {
 		panic(fmt.Errorf(
-			"The precision value (%d) is too big, the maximum value is %d",
+			"the precision value (%d) is too big, the maximum value is %d",
 			prec, math.MaxInt-1))
 	}
 
