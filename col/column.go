@@ -14,6 +14,7 @@ const (
 	Right
 )
 
+// DfltColSep is the default column separator
 const DfltColSep = " "
 
 // Col holds the values needed in order to represent a column
