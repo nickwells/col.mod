@@ -25,13 +25,13 @@ func TestFloatFormatter(t *testing.T) {
 		},
 		{
 			ID:     testhelper.MkID("ignore nil, pass a value"),
-			ff:     colfmt.Float{IgnoreNil: true},
+			ff:     colfmt.Float{NilHdlr: colfmt.NilHdlr{IgnoreNil: true}},
 			val:    1.23,
 			expStr: "1",
 		},
 		{
 			ID:     testhelper.MkID("ignore nil, pass nil"),
-			ff:     colfmt.Float{IgnoreNil: true},
+			ff:     colfmt.Float{NilHdlr: colfmt.NilHdlr{IgnoreNil: true}},
 			expStr: "",
 		},
 		{

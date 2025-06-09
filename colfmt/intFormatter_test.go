@@ -25,13 +25,13 @@ func TestIntFormatter(t *testing.T) {
 		},
 		{
 			ID:     testhelper.MkID("ignore nil, pass a value"),
-			intF:   colfmt.Int{IgnoreNil: true},
+			intF:   colfmt.Int{NilHdlr: colfmt.NilHdlr{IgnoreNil: true}},
 			val:    1,
 			expStr: "1",
 		},
 		{
 			ID:     testhelper.MkID("ignore nil, pass nil"),
-			intF:   colfmt.Int{IgnoreNil: true},
+			intF:   colfmt.Int{NilHdlr: colfmt.NilHdlr{IgnoreNil: true}},
 			expStr: "",
 		},
 		{

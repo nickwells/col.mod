@@ -24,7 +24,7 @@ func TestPrintRow(t *testing.T) {
 			ID:      testhelper.MkID("more data than columns"),
 			data:    []any{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{},
-			c:       col.New(colfmt.Int{W: 3}, "an int"),
+			c:       col.New(&colfmt.Int{W: 3}, "an int"),
 			ExpErr: testhelper.MkExpErr("Error printing row 1:" +
 				" wrong number of values." +
 				" Expected: 1," +
@@ -35,7 +35,7 @@ func TestPrintRow(t *testing.T) {
 			ID:      testhelper.MkID("more columns than data"),
 			data:    []any{},
 			hdrOpts: []col.HdrOptionFunc{},
-			c:       col.New(colfmt.Int{W: 3}, "an int"),
+			c:       col.New(&colfmt.Int{W: 3}, "an int"),
 			ExpErr: testhelper.MkExpErr("Error printing row 1:" +
 				" wrong number of values." +
 				" Expected: 1," +
@@ -46,10 +46,10 @@ func TestPrintRow(t *testing.T) {
 			ID:      testhelper.MkID("3 columns - no header"),
 			data:    []any{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
-			c:       col.New(colfmt.Int{W: 3}, "an int"),
+			c:       col.New(&colfmt.Int{W: 3}, "an int"),
 			cols: []*col.Col{
 				col.New(&colfmt.Float{W: 3}, "a float"),
-				col.New(colfmt.String{W: 3}, "string"),
+				col.New(&colfmt.String{W: 3}, "string"),
 			},
 			expectedVal: `  5   1 test
 `,
@@ -58,7 +58,7 @@ func TestPrintRow(t *testing.T) {
 			ID:      testhelper.MkID("3 col - no underline"),
 			data:    []any{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontUnderline},
-			c:       col.New(colfmt.Int{W: 3}, "an int"),
+			c:       col.New(&colfmt.Int{W: 3}, "an int"),
 			cols: []*col.Col{
 				col.New(&colfmt.Float{W: 3}, "a float"),
 				col.New(&colfmt.String{W: 3}, "string"),
@@ -72,19 +72,10 @@ func TestPrintRow(t *testing.T) {
 				"3 col, 2 hdr lines, 1 span (narrow) - no underline"),
 			data:    []any{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontUnderline},
-			c: col.New(
-				&colfmt.Int{W: 3},
-				"first line",
-				"an int"),
-
+			c:       col.New(&colfmt.Int{W: 3}, "first line", "an int"),
 			cols: []*col.Col{
-				col.New(
-					&colfmt.Float{W: 3},
-					"first line",
-					"a float"),
-				col.New(
-					colfmt.String{W: 3},
-					"a string"),
+				col.New(&colfmt.Float{W: 3}, "first line", "a float"),
+				col.New(&colfmt.String{W: 3}, "a string"),
 			},
 			expectedVal: `--first line--         
 an int a float a string
@@ -95,12 +86,12 @@ an int a float a string
 			ID:      testhelper.MkID("5 col, 3 hdr lines - no underline"),
 			data:    []any{"c1", "c2", "c3", "c4", "c5"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontUnderline},
-			c:       col.New(colfmt.String{W: 3}, "a", "b"),
+			c:       col.New(&colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}, "a", "c"),
-				col.New(colfmt.String{W: 3}, "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "g"),
-				col.New(colfmt.String{W: 3}, "e", "f", "h"),
+				col.New(&colfmt.String{W: 3}, "a", "c"),
+				col.New(&colfmt.String{W: 3}, "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "g"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "h"),
 			},
 			expectedVal: `            ---e---
 ---a---     ---f---
@@ -112,12 +103,12 @@ c1  c2  c3  c4  c5
 			ID:      testhelper.MkID("5 col, 3 hdr lines - default"),
 			data:    []any{"c1", "c2", "c3", "c4", "c5"},
 			hdrOpts: []col.HdrOptionFunc{},
-			c:       col.New(colfmt.String{W: 3}, "a", "b"),
+			c:       col.New(&colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}, "a", "c"),
-				col.New(colfmt.String{W: 3}, "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "h"),
+				col.New(&colfmt.String{W: 3}, "a", "c"),
+				col.New(&colfmt.String{W: 3}, "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "h"),
 			},
 			expectedVal: `            ---e---
 ---a---     ---f---
@@ -130,12 +121,12 @@ c1  c2  c3  c4  c5
 			ID:      testhelper.MkID("5 col, 3 hdr lines - with col Sep"),
 			data:    []any{"c1", "c2", "c3", "c4", "c5"},
 			hdrOpts: []col.HdrOptionFunc{},
-			c:       col.New(colfmt.String{W: 3}, "a", "b").SetSep("=|= "),
+			c:       col.New(&colfmt.String{W: 3}, "a", "b").SetSep("=|= "),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}, "a", "c"),
-				col.New(colfmt.String{W: 3}, "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "h"),
+				col.New(&colfmt.String{W: 3}, "a", "c"),
+				col.New(&colfmt.String{W: 3}, "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "h"),
 			},
 			expectedVal: `               ---e---
 ----a-----     ---f---
@@ -149,12 +140,12 @@ c1 =|= c2  c3  c4  c5
 			data:      []any{"c1", "c2", "c3", "c4", "c5"},
 			extraRows: 1,
 			hdrOpts:   []col.HdrOptionFunc{},
-			c:         col.New(colfmt.String{W: 3}, "a", "b"),
+			c:         col.New(&colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}, "a", "c"),
-				col.New(colfmt.String{W: 3}, "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "h"),
+				col.New(&colfmt.String{W: 3}, "a", "c"),
+				col.New(&colfmt.String{W: 3}, "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "h"),
 			},
 			expectedVal: `            ---e---
 ---a---     ---f---
@@ -171,12 +162,12 @@ c1  c2  c3  c4  c5
 			hdrOpts: []col.HdrOptionFunc{
 				col.HdrOptRepeat(2),
 			},
-			c: col.New(colfmt.String{W: 3}, "a", "b"),
+			c: col.New(&colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}, "a", "c"),
-				col.New(colfmt.String{W: 3}, "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "h"),
+				col.New(&colfmt.String{W: 3}, "a", "c"),
+				col.New(&colfmt.String{W: 3}, "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "h"),
 			},
 			expectedVal: `            ---e---
 ---a---     ---f---
@@ -195,12 +186,12 @@ c1  c2  c3  c4  c5
 			ID:      testhelper.MkID("5 col, 3 hdr lines - don't span dups"),
 			data:    []any{"c1", "c2", "c3", "c4", "c5"},
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontSpanDups},
-			c:       col.New(colfmt.String{W: 3}, "a", "b"),
+			c:       col.New(&colfmt.String{W: 3}, "a", "b"),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}, "a", "c"),
-				col.New(colfmt.String{W: 3}, "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "d"),
-				col.New(colfmt.String{W: 3}, "e", "f", "h"),
+				col.New(&colfmt.String{W: 3}, "a", "c"),
+				col.New(&colfmt.String{W: 3}, "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "d"),
+				col.New(&colfmt.String{W: 3}, "e", "f", "h"),
 			},
 			expectedVal: `            e   e  
 a   a       f   f  
@@ -265,7 +256,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []any{int64(5), float64(1.2), "test"},
 			skip:    1,
 			hdrOpts: []col.HdrOptionFunc{},
-			c:       col.New(colfmt.Int{W: 3}, "an int"),
+			c:       col.New(&colfmt.Int{W: 3}, "an int"),
 			ExpErr: testhelper.MkExpErr("Error printing row ",
 				"too many columns to skip"),
 			expectedVal: "",
@@ -275,12 +266,12 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []any{"c2", "c3", "c4", "c5"},
 			skip:    1,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
-			c:       col.New(colfmt.String{W: 3}),
+			c:       col.New(&colfmt.String{W: 3}),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
 			},
 			expectedVal: `    c2  c3  c4  c5 
 `,
@@ -290,12 +281,12 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []any{"c1", "c2", "c3", "c4", "c5"},
 			skip:    0,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
-			c:       col.New(colfmt.String{W: 3}),
+			c:       col.New(&colfmt.String{W: 3}),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
 			},
 			expectedVal: `c1  c2  c3  c4  c5 
 `,
@@ -305,12 +296,12 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []any{},
 			skip:    5,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
-			c:       col.New(colfmt.String{W: 3}),
+			c:       col.New(&colfmt.String{W: 3}),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
 			},
 			ExpErr: testhelper.MkExpErr("Error printing row ",
 				"too many columns to skip:"),
@@ -320,12 +311,12 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []any{},
 			skip:    6,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
-			c:       col.New(colfmt.String{W: 3}),
+			c:       col.New(&colfmt.String{W: 3}),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
 			},
 			ExpErr: testhelper.MkExpErr("PrintRowSkipCols(called from: ", "): ",
 				"Error printing row 1:"+
@@ -336,12 +327,12 @@ func TestPrintRowSkipCols(t *testing.T) {
 			data:    []any{},
 			skip:    4,
 			hdrOpts: []col.HdrOptionFunc{col.HdrOptDontPrint},
-			c:       col.New(colfmt.String{W: 3}),
+			c:       col.New(&colfmt.String{W: 3}),
 			cols: []*col.Col{
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
-				col.New(colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
+				col.New(&colfmt.String{W: 3}),
 			},
 			ExpErr: testhelper.MkExpErr("PrintRowSkipCols(called from: ", "): ",
 				"Error printing row 1:"+

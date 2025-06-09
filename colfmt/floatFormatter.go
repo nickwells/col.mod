@@ -16,8 +16,6 @@ type Float struct {
 	// Prec gives the precision with which to print the value when formatted
 	// Negative values are treated as zero
 	Prec uint
-	// IgnoreNil, if set to true will make nil values print as the empty string
-	IgnoreNil bool
 	// Zeroes records any desired special handling for zero values
 	Zeroes *FloatZeroHandler
 	// Verb specifies the formatting verb. If left unset it will use
@@ -30,6 +28,8 @@ type Float struct {
 	// passed value is too big or too small to be shown in the space
 	// available
 	ReformatOutOfBoundValues bool
+
+	NilHdlr
 }
 
 // makeFormat returns a format string to be used to report the value. It uses
@@ -95,7 +95,7 @@ func (f Float) trimTrailingZeros(s string) string {
 
 // Formatted returns the value formatted as a float
 func (f *Float) Formatted(v any) string {
-	if f.IgnoreNil && v == nil {
+	if f.SkipNil(v) {
 		return ""
 	}
 

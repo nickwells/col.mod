@@ -12,11 +12,15 @@ import (
 // date is Year/Month/Day not Year/Day/Month
 const DfltTimeFormat = "2006/01/02 15:04:05.000"
 
-// Time records the values needed for the formatting of a time value
+// Time records the values needed for the formatting of a time value.
 type Time struct {
-	W         uint
-	Format    string
-	IgnoreNil bool
+	// W gives the minimum space to be taken by the formatted value
+	W uint
+	// Format gives the time format to be used when formatting the value. If
+	// this is not set explicitly then the DfltTimeFmt will be used.
+	Format string
+
+	NilHdlr
 }
 
 // Formatted returns the value formatted as a time. If the format string is

@@ -13,13 +13,18 @@ type Bool struct {
 	W uint
 	// StrJust gives the justification to be used
 	StrJust col.Justification
-	// IgnoreNil, if set to true will make nil values print as the empty bool
-	IgnoreNil bool
+
+	NilHdlr
+	DupHdlr
 }
 
 // Formatted returns the value formatted as a bool
-func (f Bool) Formatted(v any) string {
-	if f.IgnoreNil && v == nil {
+func (f *Bool) Formatted(v any) string {
+	if f.SkipNil(v) {
+		return ""
+	}
+
+	if f.SkipDup(v) {
 		return ""
 	}
 

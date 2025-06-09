@@ -10,21 +10,22 @@ import (
 	"github.com/nickwells/twrap.mod/twrap"
 )
 
-// WrappedString records the values needed for the formatting of a
-// string value.
+// WrappedString records the values needed for the formatting of a string
+// value.
 type WrappedString struct {
 	// W gives the width of the block that the string should fit within. This
 	// must be set to some non-zero value.
 	W uint
-	// IgnoreNil, if set to true will make nil values print as the empty string
-	IgnoreNil bool
+
+	NilHdlr
+	DupHdlr
 }
 
 // Formatted returns the value formatted as a string. The string is wrapped
 // to a maximum length of WrappedString.W and any trailing newlines are
 // trimmed
-func (f WrappedString) Formatted(v any) string {
-	if f.IgnoreNil && v == nil {
+func (f *WrappedString) Formatted(v any) string {
+	if f.SkipNil(v) {
 		return ""
 	}
 

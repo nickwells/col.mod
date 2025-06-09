@@ -23,13 +23,13 @@ func TestNewReport(t *testing.T) {
 	}{
 		{
 			ID:   testhelper.MkID("ok"),
-			col1: col.New(colfmt.Int{Verb: 'd'}, "good"),
+			col1: col.New(&colfmt.Int{Verb: 'd'}, "good"),
 		},
 		{
 			ID:       testhelper.MkID("bad column"),
 			ExpErr:   testhelper.MkExpErr(badCol0),
 			ExpPanic: testhelper.MkExpPanic(badCol0),
-			col1:     col.New(colfmt.Int{Verb: '😀'}, "bad", "formatter"),
+			col1:     col.New(&colfmt.Int{Verb: '😀'}, "bad", "formatter"),
 		},
 		{
 			ID: testhelper.MkID("multiple bad columns"),
@@ -41,10 +41,10 @@ func TestNewReport(t *testing.T) {
 				"column[1]",
 				"column[2]",
 				badFormatVerb),
-			col1: col.New(colfmt.Int{}, "good", "formatter"),
+			col1: col.New(&colfmt.Int{}, "good", "formatter"),
 			cols: []*col.Col{
-				col.New(colfmt.Int{Verb: '😀'}, "bad", "formatter"),
-				col.New(colfmt.Int{Verb: '😀'}, "another bad", "formatter"),
+				col.New(&colfmt.Int{Verb: '😀'}, "bad", "formatter"),
+				col.New(&colfmt.Int{Verb: '😀'}, "another bad", "formatter"),
 			},
 		},
 	}

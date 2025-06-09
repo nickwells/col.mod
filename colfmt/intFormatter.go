@@ -10,8 +10,6 @@ import (
 type Int struct {
 	// W gives the minimum space to be taken by the formatted value
 	W uint
-	// IgnoreNil, if set to true will make nil values print as the empty string
-	IgnoreNil bool
 	// HandleZeroes, if set to true will check if the value to be printed is
 	// zero and if so it will print the ZeroReplacement string instead. The
 	// string printed will not be wider than the minimum space given by the W
@@ -23,18 +21,25 @@ type Int struct {
 	// Verb specifies the formatting verb. If left unset it will use
 	// 'd'. There will be a panic if it is not one of 'bcdoOqxXU'
 	Verb rune
+
+	format string
+
+	NilHdlr
+	DupHdlr
 }
 
-// makeFormat returns a format string to be used to format the value. It uses
+// makeFormat sets the format string to be used to format the value. It uses
 // the Verb to construct the format string.
-func (f Int) makeFormat() string {
-	switch f.Verb {
-	case 0:
-		return "%d"
-	case 'b', 'c', 'd', 'o', 'O', 'q', 'x', 'X', 'U':
-		return "%" + string(f.Verb)
-	default:
-		panic(fmt.Errorf("%T: bad Format verb: %q", f, f.Verb))
+func (f *Int) makeFormat() {
+	if f.format == "" {
+		switch f.Verb {
+		case 0:
+			f.format = "%d"
+		case 'b', 'c', 'd', 'o', 'O', 'q', 'x', 'X', 'U':
+			f.format = "%" + string(f.Verb)
+		default:
+			panic(fmt.Errorf("%T: bad Format verb: %q", f, f.Verb))
+		}
 	}
 }
 
@@ -69,8 +74,12 @@ func isZero(v any) bool {
 }
 
 // Formatted returns the value formatted as an int
-func (f Int) Formatted(v any) string {
-	if f.IgnoreNil && v == nil {
+func (f *Int) Formatted(v any) string {
+	if f.SkipNil(v) {
+		return ""
+	}
+
+	if f.SkipDup(v) {
 		return ""
 	}
 
@@ -80,9 +89,9 @@ func (f Int) Formatted(v any) string {
 		}
 	}
 
-	format := f.makeFormat()
+	f.makeFormat()
 
-	return fmt.Sprintf(format, v)
+	return fmt.Sprintf(f.format, v)
 }
 
 // Width returns the intended width of the value

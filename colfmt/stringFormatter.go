@@ -17,24 +17,47 @@ type String struct {
 	MaxW int
 	// StrJust gives the justification to be used
 	StrJust col.Justification
-	// IgnoreNil, if set to true will make nil values print as the empty string
-	IgnoreNil bool
+	// DuplicateIndicator is the value to show if the value to be shown is
+	// the same as the value shown on the previous line. Setting this value
+	// without also setting the SkipDuplicates flag will have no effect. Note
+	// that if the DuplicateIndicator is too long to fit in the column it
+	// will be truncated according to the settings of the W and MaxW values.
+	DuplicateIndicator string
+
+	format string
+
+	NilHdlr
+	DupHdlr
+}
+
+// makeFormat sets the format string to be used to format the value. It uses
+// the Verb to construct the format string.
+func (f *String) makeFormat() {
+	if f.format == "" {
+		switch {
+		case f.MaxW == 0:
+			f.format = "%s"
+		case f.MaxW < 0:
+			f.format = fmt.Sprintf("%%.%ds", f.W)
+		default:
+			f.format = fmt.Sprintf("%%.%ds", f.MaxW)
+		}
+	}
 }
 
 // Formatted returns the value formatted as a string
-func (f String) Formatted(v any) string {
-	if f.IgnoreNil && v == nil {
+func (f *String) Formatted(v any) string {
+	if f.SkipNil(v) {
 		return ""
 	}
 
-	switch {
-	case f.MaxW == 0:
-		return fmt.Sprintf("%s", v)
-	case f.MaxW < 0:
-		return fmt.Sprintf("%.*s", f.W, v)
-	default:
-		return fmt.Sprintf("%.*s", f.MaxW, v)
+	if f.SkipDup(v) {
+		v = f.DuplicateIndicator
 	}
+
+	f.makeFormat()
+
+	return fmt.Sprintf(f.format, v)
 }
 
 // Width returns the intended width of the value
