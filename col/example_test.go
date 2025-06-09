@@ -5,8 +5,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/nickwells/col.mod/v4/col"
-	"github.com/nickwells/col.mod/v4/colfmt"
+	"github.com/nickwells/col.mod/v5/col"
+	"github.com/nickwells/col.mod/v5/colfmt"
 )
 
 // Example_report demonstrates how the col package might be used to generate

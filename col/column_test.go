@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/nickwells/col.mod/v4/col"
-	"github.com/nickwells/col.mod/v4/colfmt"
+	"github.com/nickwells/col.mod/v5/col"
+	"github.com/nickwells/col.mod/v5/colfmt"
 	"github.com/nickwells/testhelper.mod/v2/testhelper"
 )
 
