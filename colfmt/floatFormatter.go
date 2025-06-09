@@ -61,7 +61,8 @@ func (f Float) makeFormat(v any) string {
 			f64, ok := getValAsFloat64(v)
 			if ok &&
 				(f64 < math.Pow10(-int(f.Prec)) ||
-					f64 > math.Pow10(int(f.Width())-int(f.Prec))) { //nolint:gosec
+					f64 > math.Pow10(
+						int(f.Width())-int(f.Prec))) { //nolint:gosec
 				format = "%.*g"
 			}
 		}

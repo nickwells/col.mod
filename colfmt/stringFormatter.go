@@ -14,17 +14,17 @@ type String struct {
 	// W gives the minimum width of the string that should be printed
 	W uint
 	// MaxW gives the maximum width of the string, if it is set to zero then
-	// no limit is applied. If it is set to a negative value then the W
-	// value is used. If it is a positive value then that is used
+	// no limit is applied. If it is set to a negative value then the W value
+	// is used. If it is a positive value then that is used
 	MaxW int
 	// StrJust gives the justification to be used
 	StrJust col.Justification
-	// DuplicateIndicator is the value to show if the value to be shown is
-	// the same as the value shown on the previous line. Setting this value
-	// without also setting the SkipDuplicates flag will have no effect. Note
-	// that if the DuplicateIndicator is too long to fit in the column it
-	// will be truncated according to the settings of the W and MaxW values.
-	DuplicateIndicator string
+	// DupIndicator is the value to show if the value to be shown is the same
+	// as the value shown on the previous line. Setting this value without
+	// also setting the DupHdlr.SkipDups flag will have no effect. Note that
+	// if the DupIndicator is too long to fit in the column it will be
+	// truncated according to the settings of the W and MaxW values.
+	DupIndicator string
 
 	format string
 
@@ -54,7 +54,7 @@ func (f *String) Formatted(v any) string {
 	}
 
 	if f.SkipDup(v) {
-		v = f.DuplicateIndicator
+		v = f.DupIndicator
 	}
 
 	f.makeFormat()
