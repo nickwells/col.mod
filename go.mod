@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/nickwells/testhelper.mod/v2 v2.4.1
-	github.com/nickwells/twrap.mod v1.5.8
+	github.com/nickwells/twrap.mod v1.5.9
 )
 
 require github.com/nickwells/mathutil.mod/v2 v2.5.4
