@@ -19,6 +19,12 @@ type WrappedString struct {
 	// W gives the width of the block that the string should fit within. This
 	// must be set to some non-zero value.
 	W uint
+	// DupIndicator is the value to show if the value to be shown is the same
+	// as the value shown on the previous line. Setting this value without
+	// also setting the DupHdlr.SkipDups flag will have no effect. Note that
+	// if the DupIndicator is too long to fit in the column it will be
+	// truncated according to the settings of the W and MaxW values.
+	DupIndicator string
 
 	NilHdlr
 	DupHdlr
@@ -30,6 +36,10 @@ type WrappedString struct {
 func (f *WrappedString) Formatted(v any) string {
 	if f.SkipNil(v) {
 		return ""
+	}
+
+	if f.SkipDup(v) {
+		return f.DupIndicator
 	}
 
 	if f.W > math.MaxInt {
