@@ -26,8 +26,8 @@ type Percent struct {
 
 // Formatted returns the value formatted as a percentage. That is it is taken
 // to be a proportion and is converted into a percentage value. So passing it
-// a value of 1.25 will return a value of 125% (depending on the setting of
-// SuppressPct)
+// a value of 1.25 will return a value of 125% (or 125 depending on the
+// setting of SuppressPct)
 //
 //nolint:cyclop
 func (f *Percent) Formatted(v any) string {

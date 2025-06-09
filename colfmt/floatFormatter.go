@@ -8,8 +8,10 @@ import (
 	"github.com/nickwells/col.mod/v4/col"
 )
 
-// Float records the values needed for the formatting of a
-// float(64/32) value
+// Float records the values needed for the formatting of a float(64/32)
+// value.
+//
+// See [NilHdlr] for the settings that can be given through that type.
 type Float struct {
 	// W gives the minimum space to be taken by the formatted value
 	W uint

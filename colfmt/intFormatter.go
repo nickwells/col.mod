@@ -6,7 +6,10 @@ import (
 	"github.com/nickwells/col.mod/v4/col"
 )
 
-// Int records the values needed for the formatting of an int value
+// Int records the values needed for the formatting of an int value.
+//
+// See [NilHdlr] and [DupHdlr] for the settings that can be given through
+// those types.
 type Int struct {
 	// W gives the minimum space to be taken by the formatted value
 	W uint

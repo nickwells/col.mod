@@ -6,8 +6,10 @@ import (
 	"github.com/nickwells/col.mod/v4/col"
 )
 
-// Bool records the values needed for the formatting of a
-// bool value.
+// Bool records the values needed for the formatting of a bool value.
+//
+// See [NilHdlr] and [DupHdlr] for the settings that can be given through
+// those types.
 type Bool struct {
 	// W gives the minimum width of the bool that should be printed
 	W uint

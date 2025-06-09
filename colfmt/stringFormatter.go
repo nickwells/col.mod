@@ -6,8 +6,10 @@ import (
 	"github.com/nickwells/col.mod/v4/col"
 )
 
-// String records the values needed for the formatting of a
-// string value.
+// String records the values needed for the formatting of a string value.
+//
+// See [NilHdlr] and [DupHdlr] for the settings that can be given through
+// those types.
 type String struct {
 	// W gives the minimum width of the string that should be printed
 	W uint

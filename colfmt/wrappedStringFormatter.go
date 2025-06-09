@@ -12,6 +12,9 @@ import (
 
 // WrappedString records the values needed for the formatting of a string
 // value.
+//
+// See [NilHdlr] and [DupHdlr] for the settings that can be given through
+// those types.
 type WrappedString struct {
 	// W gives the width of the block that the string should fit within. This
 	// must be set to some non-zero value.
