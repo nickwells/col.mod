@@ -90,6 +90,7 @@ func (rpt Report) printFooter(skip uint, vals ...any) error {
 		c := rpt.cols[i+int(skip)] //nolint:gosec
 
 		pwe.print(sep)
+
 		sep = c.sep
 
 		text := ""
@@ -240,9 +241,9 @@ func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
 			c := rpt.cols[i+int(skip)] //nolint:gosec
 
 			pwe.print(sep)
-			sep = c.sep
-
 			pwe.print(c.stringInCol(v[j]))
+
+			sep = c.sep
 		}
 
 		pwe.println()
@@ -255,13 +256,13 @@ func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
 func (rpt *Report) skipCols(pwe *printWithErr, skip uint) string {
 	sep := ""
 
-	for i := uint(0); i < skip; i++ {
+	for i := range skip {
 		c := rpt.cols[i]
 
 		pwe.print(sep)
-		sep = c.sep
-
 		pwe.print(c.stringInCol(""))
+
+		sep = c.sep
 	}
 
 	return sep

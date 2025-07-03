@@ -42,8 +42,7 @@ func Example_report() {
 			v.boys+v.girls,
 			float64(v.boys)/float64(v.girls))
 		if err != nil {
-			fmt.Println("Unexpected error found while printing a row:",
-				err)
+			fmt.Println("Unexpected error found while printing a row:", err)
 			break
 		}
 	}

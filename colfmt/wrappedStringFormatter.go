@@ -53,7 +53,7 @@ func (f *WrappedString) Formatted(v any) string {
 		width = 1
 	}
 
-	var b bytes.Buffer
+	b := bytes.Buffer{}
 	twc := twrap.NewTWConfOrPanic(
 		twrap.SetTargetLineLen(width),
 		twrap.SetMinChars(width),
