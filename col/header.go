@@ -76,17 +76,19 @@ func (h *Header) setSpanningCols(row, start, end uint, sg spanGrid) {
 // cached headerRows
 func (h *Header) addUnderlines(cols []*Col) {
 	if h.underlineHdr {
-		underline := ""
+		var underline strings.Builder
+
 		sep := ""
 
 		for _, c := range cols {
-			underline += sep
+			underline.WriteString(sep)
 			sep = strings.Repeat(" ", len(c.sep))
 			s := c.headers[len(c.headers)-1]
-			underline += c.stringInCol(strings.Repeat(h.underlineCh, len(s)))
+			underline.WriteString(c.stringInCol(strings.Repeat(
+				h.underlineCh, len(s))))
 		}
 
-		h.headerRows = append(h.headerRows, underline)
+		h.headerRows = append(h.headerRows, underline.String())
 	}
 }
 

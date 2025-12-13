@@ -45,6 +45,7 @@ func (f *Percent) Formatted(v any) string {
 	}
 
 	var pct float64
+
 	switch flt := v.(type) {
 	case float64:
 		pct = mathutil.ToPercent(flt)
