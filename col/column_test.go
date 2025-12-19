@@ -25,7 +25,7 @@ func TestPrintRow(t *testing.T) {
 			data:    []any{int64(5), float64(1.2), "test"},
 			hdrOpts: []col.HdrOptionFunc{},
 			c:       col.New(&colfmt.Int{W: 3}, "an int"),
-			ExpErr: testhelper.MkExpErr("Error printing row 1:" +
+			ExpErr: testhelper.MkExpErr("printing row 1:" +
 				" wrong number of values." +
 				" Expected: 1," +
 				" Received: 3"),
@@ -36,7 +36,7 @@ func TestPrintRow(t *testing.T) {
 			data:    []any{},
 			hdrOpts: []col.HdrOptionFunc{},
 			c:       col.New(&colfmt.Int{W: 3}, "an int"),
-			ExpErr: testhelper.MkExpErr("Error printing row 1:" +
+			ExpErr: testhelper.MkExpErr("printing row 1:" +
 				" wrong number of values." +
 				" Expected: 1," +
 				" Received: 0"),
@@ -257,7 +257,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 			skip:    1,
 			hdrOpts: []col.HdrOptionFunc{},
 			c:       col.New(&colfmt.Int{W: 3}, "an int"),
-			ExpErr: testhelper.MkExpErr("Error printing row ",
+			ExpErr: testhelper.MkExpErr("printing row ",
 				"too many columns to skip"),
 			expectedVal: "",
 		},
@@ -303,7 +303,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 				col.New(&colfmt.String{W: 3}),
 				col.New(&colfmt.String{W: 3}),
 			},
-			ExpErr: testhelper.MkExpErr("Error printing row ",
+			ExpErr: testhelper.MkExpErr("printing row ",
 				"too many columns to skip:"),
 		},
 		{
@@ -319,8 +319,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 				col.New(&colfmt.String{W: 3}),
 			},
 			ExpErr: testhelper.MkExpErr("PrintRowSkipCols(called from: ", "): ",
-				"Error printing row 1:"+
-					" too many columns to skip: 6 of 5"),
+				"printing row 1: too many columns to skip: 6 of 5"),
 		},
 		{
 			ID:      testhelper.MkID("5 col, no header - skip too few"),
@@ -335,8 +334,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 				col.New(&colfmt.String{W: 3}),
 			},
 			ExpErr: testhelper.MkExpErr("PrintRowSkipCols(called from: ", "): ",
-				"Error printing row 1:"+
-					" wrong number of values."+
+				"printing row 1: wrong number of values."+
 					" Skipped: 4, Expected: 1, Received: 0"),
 		},
 	}

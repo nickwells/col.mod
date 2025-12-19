@@ -144,12 +144,12 @@ type Skip struct{}
 func (rpt *Report) PrintRow(vals ...any) error {
 	if len(vals) != len(rpt.cols) {
 		return fmt.Errorf(
-			"PrintRow(called from: %s):"+
-				" Error printing row %d: wrong number of values."+
+			"PrintRow(called from: %s): printing row %d:"+
+				" wrong number of values."+
 				" Expected: %d,"+
 				" Received: %d",
-			caller(),
-			rpt.hdr.dataRowsPrinted+1, len(rpt.cols), len(vals))
+			caller(), rpt.hdr.dataRowsPrinted+1,
+			len(rpt.cols), len(vals))
 	}
 
 	return rpt.printRowSkipping(0, vals...)
@@ -163,16 +163,16 @@ func (rpt *Report) PrintRow(vals ...any) error {
 func (rpt *Report) PrintRowSkipCols(skip uint, vals ...any) error {
 	if int(skip) >= len(rpt.cols) { //nolint:gosec
 		return fmt.Errorf(
-			"PrintRowSkipCols(called from: %s):"+
-				" Error printing row %d: too many columns to skip: %d of %d",
-			caller(),
-			rpt.hdr.dataRowsPrinted+1, skip, len(rpt.cols))
+			"PrintRowSkipCols(called from: %s): printing row %d:"+
+				" the number of columns to skip (%d) must be > 0",
+			caller(), rpt.hdr.dataRowsPrinted+1,
+			skip)
 	}
 
 	if len(vals)+int(skip) != len(rpt.cols) { //nolint:gosec
 		return fmt.Errorf(
-			"PrintRowSkipCols(called from: %s):"+
-				" Error printing row %d: wrong number of values."+
+			"PrintRowSkipCols(called from: %s): printing row %d:"+
+				" wrong number of values."+
 				" Skipped: %d,"+
 				" Expected: %d,"+
 				" Received: %d",
@@ -274,8 +274,7 @@ func (rpt *Report) skipCols(pwe *printWithErr, skip uint) string {
 func (rpt Report) PrintFooterVals(skip uint, vals ...any) error {
 	if int(skip) >= len(rpt.cols) { //nolint:gosec
 		return fmt.Errorf(
-			"PrintFooterVals(called from: %s):"+
-				" Error printing footer after row %d:"+
+			"PrintFooterVals(called from: %s): printing footer after row %d:"+
 				" too many columns to skip: %d of %d",
 			caller(),
 			rpt.hdr.dataRowsPrinted, skip, len(rpt.cols))
@@ -283,13 +282,12 @@ func (rpt Report) PrintFooterVals(skip uint, vals ...any) error {
 
 	if len(vals)+int(skip) != len(rpt.cols) { //nolint:gosec
 		return fmt.Errorf(
-			"PrintFooterVals(called from: %s):"+
-				" Error printing footer after row %d: wrong number of values."+
+			"PrintFooterVals(called from: %s): printing footer after row %d:"+
+				" wrong number of values."+
 				" Skipped: %d,"+
 				" Expected: %d,"+
 				" Received: %d",
-			caller(),
-			rpt.hdr.dataRowsPrinted,
+			caller(), rpt.hdr.dataRowsPrinted,
 			skip,
 			len(rpt.cols)-int(skip), //nolint:gosec
 			len(vals))
