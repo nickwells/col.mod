@@ -20,7 +20,7 @@ type Header struct {
 	headerRows        []string
 	dataRowsPrinted   uint64
 	repeatHdrInterval uint64
-	headerRowCount    uint
+	headerRowCount    int
 	preHeaderFunc     PreHdrFunc
 	spanDups          bool
 	printHdr          bool
@@ -38,9 +38,7 @@ func (h *Header) initVals(cols []*Col) {
 	}
 
 	for _, c := range cols {
-		if uint(len(c.headers)) > h.headerRowCount {
-			h.headerRowCount = uint(len(c.headers))
-		}
+		h.headerRowCount = max(len(c.headers), h.headerRowCount)
 	}
 
 	h.headerRows = make([]string, h.headerRowCount)
@@ -48,7 +46,7 @@ func (h *Header) initVals(cols []*Col) {
 
 // setSpanningCols populates the spans slice with any columns in the
 // range start to end which are spanning in the given row
-func (h *Header) setSpanningCols(row, start, end uint, sg spanGrid) {
+func (h *Header) setSpanningCols(row, start, end int, sg spanGrid) {
 	span := span{
 		start:   start,
 		end:     start,
@@ -98,9 +96,9 @@ func (h *Header) createHeader(cols []*Col) {
 	sg := newSpanGrid(h, cols)
 
 	if h.headerRowCount > 1 {
-		h.setSpanningCols(0, 0, uint(len(cols)-1), sg) //nolint:gosec
+		h.setSpanningCols(0, 0, len(cols)-1, sg)
 
-		for row := uint(1); row < h.headerRowCount-1; row++ {
+		for row := 1; row < h.headerRowCount-1; row++ {
 			for _, span := range sg.spans[row-1] {
 				h.setSpanningCols(row, span.start, span.end, sg)
 			}
@@ -123,7 +121,7 @@ func (h *Header) createHeaderFromSpans(sg spanGrid) {
 		sep := ""
 
 		for _, span := range sg.spans[row] {
-			sWidth := int(span.width) //nolint:gosec
+			sWidth := span.width
 			h.headerRows[row] += sep
 			sep = strings.Repeat(" ", len(sg.cols[span.end].sep))
 

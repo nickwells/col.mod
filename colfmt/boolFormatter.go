@@ -12,7 +12,7 @@ import (
 // those types.
 type Bool struct {
 	// W gives the minimum width of the bool that should be printed
-	W uint
+	W int
 	// StrJust gives the justification to be used
 	StrJust col.Justification
 
@@ -34,7 +34,7 @@ func (f *Bool) Formatted(v any) string {
 }
 
 // Width returns the intended width of the value
-func (f Bool) Width() uint {
+func (f Bool) Width() int {
 	return f.W
 }
 

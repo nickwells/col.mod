@@ -12,7 +12,7 @@ import (
 // those types.
 type String struct {
 	// W gives the minimum width of the string that should be printed
-	W uint
+	W int
 	// MaxW gives the maximum width of the string, if it is set to zero then
 	// no limit is applied. If it is set to a negative value then the W value
 	// is used. If it is a positive value then that is used
@@ -62,7 +62,7 @@ func (f *String) Formatted(v any) string {
 }
 
 // Width returns the intended width of the value
-func (f String) Width() uint {
+func (f String) Width() int {
 	return f.W
 }
 
@@ -71,7 +71,11 @@ func (f String) Just() col.Justification {
 	return f.StrJust
 }
 
-// Check returns a nil error
+// Check returns a non-nil error if the parameters are invalid
 func (f String) Check() error {
+	if f.W <= 0 {
+		return fmt.Errorf("the width (%d) must be > 0", f.W)
+	}
+
 	return nil
 }

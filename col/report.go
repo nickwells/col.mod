@@ -23,8 +23,7 @@ func NewReport(hdr *Header, w io.Writer, c *Col, cs ...*Col) (*Report, error) {
 
 	cols = append(cols, cs...)
 
-	err := checkColumns(cols)
-	if err != nil {
+	if err := checkColumns(cols); err != nil {
 		return nil, err
 	}
 
@@ -69,8 +68,7 @@ func checkColumns(cols []*Col) error {
 	var allErrs []error
 
 	for i, c := range cols {
-		err := c.f.Check()
-		if err != nil {
+		if err := c.f.Check(); err != nil {
 			allErrs = append(allErrs,
 				fmt.Errorf("column[%d] (%q) has a bad Formatter: %w",
 					i, c.headers, err))
@@ -81,13 +79,13 @@ func checkColumns(cols []*Col) error {
 }
 
 // printFooter prints the footers under the numbered columns
-func (rpt Report) printFooter(skip uint, vals ...any) error {
+func (rpt Report) printFooter(skip int, vals ...any) error {
 	pwe := printWithErr{w: rpt.w}
 
 	sep := rpt.skipCols(&pwe, skip)
 
 	for i, v := range vals {
-		c := rpt.cols[i+int(skip)] //nolint:gosec
+		c := rpt.cols[i+skip]
 
 		pwe.print(sep)
 
@@ -95,9 +93,7 @@ func (rpt Report) printFooter(skip uint, vals ...any) error {
 
 		text := ""
 		if _, ok := v.(Skip); !ok {
-			text = strings.Repeat(
-				rpt.hdr.underlineCh,
-				int(c.finalWidth)) //nolint:gosec
+			text = strings.Repeat(rpt.hdr.underlineCh, c.finalWidth)
 		}
 
 		pwe.print(c.stringInCol(text))
@@ -160,8 +156,16 @@ func (rpt *Report) PrintRow(vals ...any) error {
 // will skip the first columns as specified. The most likely use for this is
 // if you have several leading columns you want to skip. To skip individual
 // columns you can use a col.Skip{}
-func (rpt *Report) PrintRowSkipCols(skip uint, vals ...any) error {
-	if int(skip) >= len(rpt.cols) { //nolint:gosec
+func (rpt *Report) PrintRowSkipCols(skip int, vals ...any) error {
+	if skip >= len(rpt.cols) {
+		return fmt.Errorf(
+			"PrintRowSkipCols(called from: %s): printing row %d:"+
+				" too many columns to skip: %d of %d",
+			caller(), rpt.hdr.dataRowsPrinted+1,
+			skip, len(rpt.cols))
+	}
+
+	if skip < 0 {
 		return fmt.Errorf(
 			"PrintRowSkipCols(called from: %s): printing row %d:"+
 				" the number of columns to skip (%d) must be > 0",
@@ -169,18 +173,15 @@ func (rpt *Report) PrintRowSkipCols(skip uint, vals ...any) error {
 			skip)
 	}
 
-	if len(vals)+int(skip) != len(rpt.cols) { //nolint:gosec
+	if len(vals)+skip != len(rpt.cols) {
 		return fmt.Errorf(
 			"PrintRowSkipCols(called from: %s): printing row %d:"+
 				" wrong number of values."+
 				" Skipped: %d,"+
 				" Expected: %d,"+
 				" Received: %d",
-			caller(),
-			rpt.hdr.dataRowsPrinted+1,
-			skip,
-			len(rpt.cols)-int(skip), //nolint:gosec
-			len(vals))
+			caller(), rpt.hdr.dataRowsPrinted+1,
+			skip, len(rpt.cols)-skip, len(vals))
 	}
 
 	return rpt.printRowSkipping(skip, vals...)
@@ -188,7 +189,7 @@ func (rpt *Report) PrintRowSkipCols(skip uint, vals ...any) error {
 
 // printRowSkipping skips leading columns and prints the remainder. It prints
 // the header as necessary and increments the number of rows printed
-func (rpt *Report) printRowSkipping(skip uint, vals ...any) error {
+func (rpt *Report) printRowSkipping(skip int, vals ...any) error {
 	defer rpt.hdr.incrDataRowsPrinted()
 
 	rpt.hdr.printHeader(rpt.w, rpt.cols)
@@ -198,7 +199,7 @@ func (rpt *Report) printRowSkipping(skip uint, vals ...any) error {
 
 // printValsSkipping skips leading columns and prints the remainder. It does
 // not print the header or increment the number of rows printed
-func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
+func (rpt *Report) printValsSkipping(skip int, vals ...any) error {
 	pwe := printWithErr{w: rpt.w}
 
 	// first collect all the strings to be printed (these may have embedded
@@ -209,7 +210,7 @@ func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
 	maxLines := 0
 
 	for i, v := range vals {
-		c := rpt.cols[i+int(skip)] //nolint:gosec
+		c := rpt.cols[i+skip]
 		str := ""
 
 		if _, ok := v.(Skip); !ok {
@@ -218,9 +219,7 @@ func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
 
 		lines := strings.Split(str, "\n")
 
-		if len(lines) > maxLines {
-			maxLines = len(lines)
-		}
+		maxLines = max(len(lines), maxLines)
 
 		stringVals = append(stringVals, lines)
 	}
@@ -238,7 +237,7 @@ func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
 		sep := rpt.skipCols(&pwe, skip)
 
 		for i, v := range stringVals {
-			c := rpt.cols[i+int(skip)] //nolint:gosec
+			c := rpt.cols[i+skip]
 
 			pwe.print(sep)
 			pwe.print(c.stringInCol(v[j]))
@@ -253,7 +252,7 @@ func (rpt *Report) printValsSkipping(skip uint, vals ...any) error {
 }
 
 // skipCols skips leading columns
-func (rpt *Report) skipCols(pwe *printWithErr, skip uint) string {
+func (rpt *Report) skipCols(pwe *printWithErr, skip int) string {
 	sep := ""
 
 	for i := range skip {
@@ -271,16 +270,24 @@ func (rpt *Report) skipCols(pwe *printWithErr, skip uint) string {
 // PrintFooterVals prints values for the footer. It does not print the header
 // or increment the number of rows printed. It will print Header.underlineCh
 // characters under the columns being printed
-func (rpt Report) PrintFooterVals(skip uint, vals ...any) error {
-	if int(skip) >= len(rpt.cols) { //nolint:gosec
+func (rpt Report) PrintFooterVals(skip int, vals ...any) error {
+	if skip >= len(rpt.cols) {
 		return fmt.Errorf(
 			"PrintFooterVals(called from: %s): printing footer after row %d:"+
 				" too many columns to skip: %d of %d",
-			caller(),
-			rpt.hdr.dataRowsPrinted, skip, len(rpt.cols))
+			caller(), rpt.hdr.dataRowsPrinted,
+			skip, len(rpt.cols))
 	}
 
-	if len(vals)+int(skip) != len(rpt.cols) { //nolint:gosec
+	if skip < 0 {
+		return fmt.Errorf(
+			"PrintFooterVals(called from: %s): printing footer after row %d:"+
+				" the number of columns to skip (%d) must be > 0",
+			caller(), rpt.hdr.dataRowsPrinted,
+			skip)
+	}
+
+	if len(vals)+skip != len(rpt.cols) {
 		return fmt.Errorf(
 			"PrintFooterVals(called from: %s): printing footer after row %d:"+
 				" wrong number of values."+
@@ -289,7 +296,7 @@ func (rpt Report) PrintFooterVals(skip uint, vals ...any) error {
 				" Received: %d",
 			caller(), rpt.hdr.dataRowsPrinted,
 			skip,
-			len(rpt.cols)-int(skip), //nolint:gosec
+			len(rpt.cols)-skip,
 			len(vals))
 	}
 

@@ -21,7 +21,7 @@ const DfltColSep = " "
 type Col struct {
 	headers    []string
 	f          Formatter
-	finalWidth uint
+	finalWidth int
 	sep        string
 }
 
@@ -37,7 +37,7 @@ func New(f Formatter, colHead ...string) *Col {
 		c.headers = make([]string, 1)
 	}
 
-	c.finalWidth = f.Width()
+	c.finalWidth = int(f.Width())
 
 	return c
 }
@@ -52,8 +52,8 @@ func (c *Col) SetSep(s string) *Col {
 // hdrText returns the text of the header corresponding to the given row
 // If the row is before the start of the headers for that column then the
 // empty string is returned
-func (c Col) hdrText(rowIdx, rowCount uint) string {
-	valIdx := len(c.headers) - int(rowCount) + int(rowIdx) //nolint:gosec
+func (c Col) hdrText(rowIdx, rowCount int) string {
+	valIdx := len(c.headers) - rowCount + rowIdx
 	if valIdx < 0 || valIdx >= len(c.headers) {
 		return ""
 	}

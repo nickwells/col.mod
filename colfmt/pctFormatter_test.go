@@ -169,7 +169,7 @@ func TestPercentWidth(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		pf       colfmt.Percent
-		expWidth uint
+		expWidth int
 	}{
 		{
 			ID:       testhelper.MkID("default"),

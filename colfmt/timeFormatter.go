@@ -15,7 +15,7 @@ const DfltTimeFormat = "2006/01/02 15:04:05.000"
 // Time records the values needed for the formatting of a time value.
 type Time struct {
 	// W gives the minimum space to be taken by the formatted value
-	W uint
+	W int
 	// Format gives the time format to be used when formatting the value. If
 	// this is not set explicitly then the DfltTimeFmt will be used.
 	Format string
@@ -45,13 +45,13 @@ func (f *Time) Formatted(v any) string {
 // the length of the format string is used as a reasonable (but imperfect)
 // value. If the format string is not set then it is set to the
 // DfltTimeFormat before the width is calculated.
-func (f *Time) Width() uint {
+func (f *Time) Width() int {
 	if f.W == 0 {
 		if f.Format == "" {
 			f.Format = DfltTimeFormat
 		}
 
-		f.W = uint(len(f.Format))
+		f.W = len(f.Format)
 	}
 
 	return f.W

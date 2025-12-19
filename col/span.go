@@ -13,11 +13,11 @@ package col
 // If the column in the row above is in a single-column span then all the rows
 // below will have that same column in a single-column span too.
 type span struct {
-	start, end uint
-	row        uint
+	start, end int
+	row        int
 	hdrText    string
-	width      uint
-	sepWidth   uint
+	width      int
+	sepWidth   int
 }
 
 // isMultiCol returns true if the span represents multiple columns
@@ -26,8 +26,8 @@ func (s span) isMultiCol() bool {
 }
 
 // minWidth returns the minimum width of the span
-func (s span) minWidth() uint {
-	w := uint(len(s.hdrText))
+func (s span) minWidth() int {
+	w := len(s.hdrText)
 	if s.isMultiCol() && w > 0 {
 		// at least one hyphen at each end of the multi-column
 		// span (but not for nameless spans, where w == 0)
@@ -59,10 +59,10 @@ func newSpanGrid(h *Header, cols []*Col) spanGrid {
 // totalWidth gets the total width of all the spans in the row between start
 // and end. It ignores any span before start, stops when it gets to the first
 // span after end and adds extra space for every gap between spans
-func (sg spanGrid) totalWidth(row, start, end uint) uint {
-	var w uint
+func (sg spanGrid) totalWidth(row, start, end int) int {
+	var w int
 
-	var gapIncr uint
+	var gapIncr int
 
 	for _, span := range sg.spans[row] {
 		if span.end < start {
@@ -74,7 +74,7 @@ func (sg spanGrid) totalWidth(row, start, end uint) uint {
 		}
 
 		w += gapIncr + span.width
-		gapIncr = uint(len(sg.cols[span.end].sep))
+		gapIncr = len(sg.cols[span.end].sep)
 	}
 
 	return w
@@ -90,15 +90,8 @@ func (sg spanGrid) setWidths() {
 func (sg spanGrid) setWidthsFromSpansBelow() {
 	for row := len(sg.spans) - 2; row >= 0; row-- { //nolint:mnd
 		for i, span := range sg.spans[row] {
-			w := span.minWidth()
-
-			nextRowWidth := sg.totalWidth(
-				uint(row+1), span.start, span.end) //nolint:gosec
-			if nextRowWidth > w {
-				w = nextRowWidth
-			}
-
-			span.width = w
+			nextRowWidth := sg.totalWidth(row+1, span.start, span.end)
+			span.width = max(nextRowWidth, span.minWidth())
 			sg.spans[row][i] = span
 		}
 	}
@@ -107,7 +100,7 @@ func (sg spanGrid) setWidthsFromSpansBelow() {
 func (sg spanGrid) setWidthsFromSpansAbove() {
 	for row := 1; row <= len(sg.spans)-1; row++ {
 		for _, span := range sg.spans[row-1] {
-			w := sg.totalWidth(uint(row), span.start, span.end) //nolint:gosec
+			w := sg.totalWidth(row, span.start, span.end)
 			if span.width > w {
 				// adjust the span widths below to take account of any extra
 				// space from the spanning columns above
@@ -150,17 +143,14 @@ func (sg spanGrid) setLastRowOfHeader() {
 	row := len(sg.spans) - 1
 	for i, c := range sg.cols {
 		span := span{
-			start:    uint(i),
-			end:      uint(i),
-			row:      uint(row),
-			hdrText:  c.hdrText(uint(row), uint(len(sg.spans))),
+			start:    i,
+			end:      i,
+			row:      row,
+			hdrText:  c.hdrText(row, len(sg.spans)),
 			width:    c.finalWidth,
-			sepWidth: uint(len(c.sep)),
+			sepWidth: len(c.sep),
 		}
-		if len(span.hdrText) > int(span.width) {
-			span.width = uint(len(span.hdrText))
-		}
-
+		span.width = max(len(span.hdrText), span.width)
 		sg.spans[row] = append(sg.spans[row], span)
 	}
 }

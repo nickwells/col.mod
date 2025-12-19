@@ -245,7 +245,7 @@ func TestPrintRowSkipCols(t *testing.T) {
 		testhelper.ID
 		testhelper.ExpErr
 		data        []any
-		skip        uint
+		skip        int
 		hdrOpts     []col.HdrOptionFunc
 		c           *col.Col
 		cols        []*col.Col

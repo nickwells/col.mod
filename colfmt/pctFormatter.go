@@ -13,9 +13,9 @@ import (
 // is added to the end (unless SuppressPct is set to true)
 type Percent struct {
 	// W gives the minimum space to be taken by the formatted value
-	W uint
+	W int
 	// Prec gives the precision with which to print the value when formatted
-	Prec uint
+	Prec int
 	// IgnoreNil, if set to true will make nil values print as the empty string
 	IgnoreNil bool
 	// SuppressPct, if set to true will cause the '%' sign not to be printed
@@ -82,8 +82,8 @@ func (f *Percent) Formatted(v any) string {
 
 // Width returns the intended width of the value. An invalid width or one
 // incompatible with the given precision is ignored
-func (f Percent) Width() uint {
-	var minWidth uint = 1
+func (f Percent) Width() int {
+	var minWidth int = 1
 	if !f.SuppressPct {
 		minWidth++ // for the % sign
 	}

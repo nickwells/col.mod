@@ -12,7 +12,7 @@ import (
 // those types.
 type Int struct {
 	// W gives the minimum space to be taken by the formatted value
-	W uint
+	W int
 	// HandleZeroes, if set to true will check if the value to be printed is
 	// zero and if so it will print the ZeroReplacement string instead. The
 	// string printed will not be wider than the minimum space given by the W
@@ -71,6 +71,8 @@ func isZero(v any) bool {
 		return i == 0
 	case uint8:
 		return i == 0
+	case uint:
+		return i == 0
 	default:
 		return false
 	}
@@ -98,7 +100,7 @@ func (f *Int) Formatted(v any) string {
 }
 
 // Width returns the intended width of the value
-func (f Int) Width() uint {
+func (f Int) Width() int {
 	if f.W == 0 {
 		return 1
 	}

@@ -110,7 +110,7 @@ func TestIntWidth(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		intF     colfmt.Int
-		expWidth uint
+		expWidth int
 	}{
 		{
 			ID:       testhelper.MkID("zero width"),

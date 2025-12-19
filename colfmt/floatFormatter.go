@@ -14,10 +14,10 @@ import (
 // See [NilHdlr] for the settings that can be given through that type.
 type Float struct {
 	// W gives the minimum space to be taken by the formatted value
-	W uint
+	W int
 	// Prec gives the precision with which to print the value when formatted
 	// Negative values are treated as zero
-	Prec uint
+	Prec int
 	// Zeroes records any desired special handling for zero values
 	Zeroes *FloatZeroHandler
 	// Verb specifies the formatting verb. If left unset it will use
@@ -60,9 +60,8 @@ func (f Float) makeFormat(v any) string {
 
 			f64, ok := getValAsFloat64(v)
 			if ok &&
-				(f64 < math.Pow10(-int(f.Prec)) ||
-					f64 > math.Pow10(
-						int(f.Width())-int(f.Prec))) { //nolint:gosec
+				(f64 < math.Pow10(-f.Prec) ||
+					f64 > math.Pow10(f.Width()-f.Prec)) {
 				format = "%.*g"
 			}
 		}
@@ -113,8 +112,8 @@ func (f *Float) Formatted(v any) string {
 
 // Width returns the intended width of the value. An invalid width or one
 // incompatible with the given precision is ignored
-func (f Float) Width() uint {
-	var minWidth uint = 1
+func (f Float) Width() int {
+	minWidth := 1
 	if f.Prec > 0 {
 		minWidth++ // for the decimal place
 		minWidth += f.Prec

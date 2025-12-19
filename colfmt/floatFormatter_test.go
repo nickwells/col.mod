@@ -152,7 +152,7 @@ func TestFloatWidth(t *testing.T) {
 	testCases := []struct {
 		testhelper.ID
 		ff       colfmt.Float
-		expWidth uint
+		expWidth int
 	}{
 		{
 			ID:       testhelper.MkID("default"),

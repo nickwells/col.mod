@@ -3,7 +3,6 @@ package colfmt
 import (
 	"bytes"
 	"fmt"
-	"math"
 	"strings"
 
 	"github.com/nickwells/col.mod/v5/col"
@@ -17,13 +16,13 @@ import (
 // those types.
 type WrappedString struct {
 	// W gives the width of the block that the string should fit within. This
-	// must be set to some non-zero value.
-	W uint
+	// must be set to some value greater than zero.
+	W int
 	// DupIndicator is the value to show if the value to be shown is the same
 	// as the value shown on the previous line. Setting this value without
 	// also setting the DupHdlr.SkipDups flag will have no effect. Note that
 	// if the DupIndicator is too long to fit in the column it will be
-	// truncated according to the settings of the W and MaxW values.
+	// truncated according to the setting of the W value.
 	DupIndicator string
 
 	NilHdlr
@@ -42,13 +41,11 @@ func (f *WrappedString) Formatted(v any) string {
 		return f.DupIndicator
 	}
 
-	if f.W > math.MaxInt {
-		panic(fmt.Errorf(
-			"the width (%d) is too big, the maximum value is %d",
-			f.W, math.MaxInt))
+	if f.W < 0 {
+		panic(fmt.Errorf("the width (%d) must be greater than zero", f.W))
 	}
 
-	width := int(f.W) //nolint:gosec
+	width := f.W
 	if width == 0 {
 		width = 1
 	}
@@ -65,7 +62,7 @@ func (f *WrappedString) Formatted(v any) string {
 }
 
 // Width returns the intended width of the value
-func (f WrappedString) Width() uint {
+func (f WrappedString) Width() int {
 	if f.W == 0 {
 		return 1
 	}
@@ -80,7 +77,7 @@ func (f WrappedString) Just() col.Justification {
 
 // Check returns a non-nil error if the parameters are invalid
 func (f WrappedString) Check() error {
-	if f.W == 0 {
+	if f.W <= 0 {
 		return fmt.Errorf("the width (%d) must be > 0", f.W)
 	}
 

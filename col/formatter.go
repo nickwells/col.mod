@@ -9,7 +9,7 @@ type Formatter interface {
 	// Width should return the expected width of the string printed with the
 	// format string. Note that the actual width of the string may be greater
 	// than this depending on the width of the column header
-	Width() uint
+	Width() int
 	// Just should return whether the resultant string is left or right
 	// justified. This information is needed when deciding how to print the
 	// header
