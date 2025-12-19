@@ -32,8 +32,7 @@ type String struct {
 	DupHdlr
 }
 
-// makeFormat sets the format string to be used to format the value. It uses
-// the Verb to construct the format string.
+// makeFormat sets the format string to be used to format the value.
 func (f *String) makeFormat() {
 	if f.format == "" {
 		switch {
