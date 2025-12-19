@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/nickwells/col.mod/v5/col"
+	"github.com/nickwells/col.mod/v6/col"
 )
 
 // DfltTimeFormat is the format that will be used by the Time Formatter for

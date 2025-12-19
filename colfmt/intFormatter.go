@@ -3,7 +3,7 @@ package colfmt
 import (
 	"fmt"
 
-	"github.com/nickwells/col.mod/v5/col"
+	"github.com/nickwells/col.mod/v6/col"
 )
 
 // Int records the values needed for the formatting of an int value.
