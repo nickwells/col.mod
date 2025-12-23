@@ -12,14 +12,14 @@ import (
 // or, if the header is periodically repeated, it could be used, for instance,
 // to print sub-totals. The int64 parameter passes the number of data rows
 // printed, if this is zero then the header is being printed for the first time
-type PreHdrFunc func(io.Writer, uint64)
+type PreHdrFunc func(io.Writer, int64)
 
 // Header holds the parameters which control how and when the header is printed
 type Header struct {
 	underlineCh       string
 	headerRows        []string
-	dataRowsPrinted   uint64
-	repeatHdrInterval uint64
+	dataRowsPrinted   int64
+	repeatHdrInterval int64
 	headerRowCount    int
 	preHeaderFunc     PreHdrFunc
 	spanDups          bool
@@ -229,7 +229,7 @@ func HdrOptUnderlineWith(r rune) HdrOptionFunc {
 // HdrOptRepeat returns a HdrOptionFunc that will set the number of lines of
 // data that should be printed before the header is printed again. If this
 // value is not set then the header is only printed once
-func HdrOptRepeat(n uint64) HdrOptionFunc {
+func HdrOptRepeat(n int64) HdrOptionFunc {
 	return func(h *Header) error {
 		if n < 1 {
 			return fmt.Errorf("the header repeat count (%d) must be >= 1", n)

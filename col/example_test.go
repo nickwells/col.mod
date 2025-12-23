@@ -62,7 +62,7 @@ func Example_report2() {
 	// First, create the header
 	h, err := col.NewHeader(
 		// On the first page only, print a report description
-		col.HdrOptPreHdrFunc(func(w io.Writer, n uint64) {
+		col.HdrOptPreHdrFunc(func(w io.Writer, n int64) {
 			if n == 0 {
 				fmt.Fprintln(w,
 					"A report on the variation in class sizes over time")
