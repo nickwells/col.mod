@@ -157,31 +157,10 @@ func (rpt *Report) PrintRow(vals ...any) error {
 // if you have several leading columns you want to skip. To skip individual
 // columns you can use a col.Skip{}
 func (rpt *Report) PrintRowSkipCols(skip int, vals ...any) error {
-	if skip >= len(rpt.cols) {
+	if err := rpt.checkSkipVal(skip, len(vals)); err != nil {
 		return fmt.Errorf(
-			"PrintRowSkipCols(called from: %s): printing row %d:"+
-				" too many columns to skip: %d of %d",
-			caller(), rpt.hdr.dataRowsPrinted+1,
-			skip, len(rpt.cols))
-	}
-
-	if skip < 0 {
-		return fmt.Errorf(
-			"PrintRowSkipCols(called from: %s): printing row %d:"+
-				" the number of columns to skip (%d) must be > 0",
-			caller(), rpt.hdr.dataRowsPrinted+1,
-			skip)
-	}
-
-	if len(vals)+skip != len(rpt.cols) {
-		return fmt.Errorf(
-			"PrintRowSkipCols(called from: %s): printing row %d:"+
-				" wrong number of values."+
-				" Skipped: %d,"+
-				" Expected: %d,"+
-				" Received: %d",
-			caller(), rpt.hdr.dataRowsPrinted+1,
-			skip, len(rpt.cols)-skip, len(vals))
+			"PrintRowSkipCols(called from: %s): printing row %d: %s",
+			caller(), rpt.hdr.dataRowsPrinted+1, err)
 	}
 
 	return rpt.printRowSkipping(skip, vals...)
@@ -271,33 +250,11 @@ func (rpt *Report) skipCols(pwe *printWithErr, skip int) string {
 // or increment the number of rows printed. It will print Header.underlineCh
 // characters under the columns being printed
 func (rpt Report) PrintFooterVals(skip int, vals ...any) error {
-	if skip >= len(rpt.cols) {
+	if err := rpt.checkSkipVal(skip, len(vals)); err != nil {
 		return fmt.Errorf(
-			"PrintFooterVals(called from: %s): printing footer after row %d:"+
-				" too many columns to skip: %d of %d",
-			caller(), rpt.hdr.dataRowsPrinted,
-			skip, len(rpt.cols))
-	}
-
-	if skip < 0 {
-		return fmt.Errorf(
-			"PrintFooterVals(called from: %s): printing footer after row %d:"+
-				" the number of columns to skip (%d) must be > 0",
-			caller(), rpt.hdr.dataRowsPrinted,
-			skip)
-	}
-
-	if len(vals)+skip != len(rpt.cols) {
-		return fmt.Errorf(
-			"PrintFooterVals(called from: %s): printing footer after row %d:"+
-				" wrong number of values."+
-				" Skipped: %d,"+
-				" Expected: %d,"+
-				" Received: %d",
-			caller(), rpt.hdr.dataRowsPrinted,
-			skip,
-			len(rpt.cols)-skip,
-			len(vals))
+			"PrintFooterVals(called from: %s):"+
+				" printing footer after row %d: %s",
+			caller(), rpt.hdr.dataRowsPrinted, err)
 	}
 
 	err := rpt.printFooter(skip, vals...)
@@ -306,4 +263,37 @@ func (rpt Report) PrintFooterVals(skip int, vals ...any) error {
 	}
 
 	return rpt.printValsSkipping(skip, vals...)
+}
+
+// checkSkipVal returns an error if the skip value is invalid. This can mean
+// it is less than zero, greater than the number of columns or that the
+// number of values plus the number to skip does not equal the number of
+// columns expected. Note that the skip parameter is strictly unneccessary as
+// the Print... func's could all take the number of values to skip as
+// implicit in the number of values to print but this API makes it clearer
+// what the intention of the developer is and, hopefully, will make any
+// errors easier to find.
+func (rpt Report) checkSkipVal(skip, valCnt int) error {
+	colCnt := len(rpt.cols)
+
+	if skip >= colCnt {
+		return fmt.Errorf("too many columns to skip: %d of %d", skip, colCnt)
+	}
+
+	if skip < 0 {
+		return fmt.Errorf("the number of columns to skip (%d) must be > 0",
+			skip)
+	}
+
+	if valCnt+skip != colCnt {
+		return fmt.Errorf("wrong number of values."+
+			" Skipped: %d,"+
+			" Expected: %d,"+
+			" Received: %d",
+			skip,
+			colCnt-skip,
+			valCnt)
+	}
+
+	return nil
 }
