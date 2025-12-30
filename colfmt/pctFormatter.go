@@ -69,6 +69,8 @@ func (f *Percent) Formatted(v any) string {
 		pct = mathutil.ToPercent(float64(flt))
 	case uint8:
 		pct = mathutil.ToPercent(float64(flt))
+	case uint:
+		pct = mathutil.ToPercent(float64(flt))
 	default:
 		return fmt.Sprintf("Numeric value expected (got: %T): %v", v, v)
 	}
@@ -83,14 +85,14 @@ func (f *Percent) Formatted(v any) string {
 // Width returns the intended width of the value. An invalid width or one
 // incompatible with the given precision is ignored
 func (f Percent) Width() int {
-	var minWidth int = 1
+	minWidth := 1
 	if !f.SuppressPct {
 		minWidth++ // for the % sign
 	}
 
 	if f.Prec > 0 {
-		minWidth++ // for the decimal place
-		minWidth += f.Prec
+		minWidth++         // for the decimal place
+		minWidth += f.Prec // for the precision digits
 	}
 
 	if minWidth > f.W {
