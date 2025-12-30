@@ -181,41 +181,15 @@ func (rpt *Report) printRowSkipping(skip int, vals ...any) error {
 func (rpt *Report) printValsSkipping(skip int, vals ...any) error {
 	pwe := printWithErr{w: rpt.w}
 
-	// first collect all the strings to be printed (these may have embedded
-	// new lines)
-
-	var stringVals [][]string
-
-	maxLines := 0
-
-	for i, v := range vals {
-		c := rpt.cols[i+skip]
-		str := ""
-
-		if _, ok := v.(Skip); !ok {
-			str = c.f.Formatted(v)
-		}
-
-		lines := strings.Split(str, "\n")
-
-		maxLines = max(len(lines), maxLines)
-
-		stringVals = append(stringVals, lines)
-	}
-
-	blanks := make([]string, maxLines)
-
-	for i, lines := range stringVals {
-		if len(lines) < maxLines {
-			lines = append(lines, blanks[:maxLines-len(lines)]...)
-			stringVals[i] = lines
-		}
-	}
+	// generate all the lines to be printed for this row (note that some
+	// columns can be formatted into multiple lines of text)
+	lineVals, maxLines := rpt.splitVals(skip, vals...)
+	lineVals = addBlanks(lineVals, maxLines)
 
 	for j := range maxLines {
 		sep := rpt.skipCols(&pwe, skip)
 
-		for i, v := range stringVals {
+		for i, v := range lineVals {
 			c := rpt.cols[i+skip]
 
 			pwe.print(sep)
@@ -268,7 +242,7 @@ func (rpt Report) PrintFooterVals(skip int, vals ...any) error {
 // checkSkipVal returns an error if the skip value is invalid. This can mean
 // it is less than zero, greater than the number of columns or that the
 // number of values plus the number to skip does not equal the number of
-// columns expected. Note that the skip parameter is strictly unneccessary as
+// columns expected. Note that the skip parameter is strictly uneccessary as
 // the Print... func's could all take the number of values to skip as
 // implicit in the number of values to print but this API makes it clearer
 // what the intention of the developer is and, hopefully, will make any
@@ -296,4 +270,48 @@ func (rpt Report) checkSkipVal(skip, valCnt int) error {
 	}
 
 	return nil
+}
+
+// splitVals takes each value, formats it, splits the formatted value around
+// newlines and adds each generated slice of values into the slice of slices
+// to be returned. It simultaneously keeps track of the maximum number of
+// lines detected. Finally it returns the collection of lines and the maximum
+// number of lines encountered.
+func (rpt *Report) splitVals(skip int, vals ...any) ([][]string, int) {
+	var lineVals [][]string
+
+	maxLines := 0
+
+	for i, v := range vals {
+		c := rpt.cols[i+skip]
+		str := ""
+
+		if _, ok := v.(Skip); !ok {
+			str = c.f.Formatted(v)
+		}
+
+		lines := strings.Split(str, "\n")
+
+		maxLines = max(len(lines), maxLines)
+
+		lineVals = append(lineVals, lines)
+	}
+
+	return lineVals, maxLines
+}
+
+// addBlanks takes a slice of slices (each of which may have different
+// numbers of members) and ensures that each has the same number of entries
+// by adding blank strings at the end.
+func addBlanks(lineVals [][]string, maxLines int) [][]string {
+	blanks := make([]string, maxLines)
+
+	for i, lines := range lineVals {
+		if len(lines) < maxLines {
+			lines = append(lines, blanks[:maxLines-len(lines)]...)
+			lineVals[i] = lines
+		}
+	}
+
+	return lineVals
 }
