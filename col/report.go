@@ -139,13 +139,25 @@ type Skip struct{}
 // return an error if there are not the same number of values as columns.
 func (rpt *Report) PrintRow(vals ...any) error {
 	if len(vals) != len(rpt.cols) {
+		suggestion := ""
+
+		if len(vals) == 1 {
+			valsType := fmt.Sprintf("%T", vals[0])
+			if valsType == "[]interface {}" || valsType == "[]any" {
+				suggestion = " Did you pass the slice of values directly" +
+					" instead of passing it as 'vals...'"
+			}
+		}
+
 		return fmt.Errorf(
 			"PrintRow(called from: %s): printing row %d:"+
 				" wrong number of values."+
 				" Expected: %d,"+
-				" Received: %d",
+				" Received: %d"+
+				"%s",
 			caller(), rpt.hdr.dataRowsPrinted+1,
-			len(rpt.cols), len(vals))
+			len(rpt.cols), len(vals),
+			suggestion)
 	}
 
 	return rpt.printRowSkipping(0, vals...)
