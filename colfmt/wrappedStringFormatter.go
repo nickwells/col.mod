@@ -2,7 +2,6 @@ package colfmt
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 
 	"github.com/nickwells/col.mod/v6/col"
@@ -41,12 +40,8 @@ func (f *WrappedString) Formatted(v any) string {
 		return f.DupIndicator
 	}
 
-	if f.W < 0 {
-		panic(fmt.Errorf("the width (%d) must be greater than zero", f.W))
-	}
-
 	width := f.W
-	if width == 0 {
+	if width <= 0 {
 		width = 1
 	}
 
@@ -63,7 +58,7 @@ func (f *WrappedString) Formatted(v any) string {
 
 // Width returns the intended width of the value
 func (f WrappedString) Width() int {
-	if f.W == 0 {
+	if f.W <= 0 {
 		return 1
 	}
 
@@ -75,11 +70,7 @@ func (f WrappedString) Just() col.Justification {
 	return col.Left
 }
 
-// Check returns a non-nil error if the parameters are invalid
+// Check returns a nil error
 func (f WrappedString) Check() error {
-	if f.W <= 0 {
-		return fmt.Errorf("the width (%d) must be > 0", f.W)
-	}
-
 	return nil
 }

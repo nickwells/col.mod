@@ -39,7 +39,11 @@ func (f *String) makeFormat() {
 		case f.MaxW == 0:
 			f.format = "%s"
 		case f.MaxW < 0:
-			f.format = fmt.Sprintf("%%.%ds", f.W)
+			if f.W <= 0 {
+				f.format = "%s"
+			} else {
+				f.format = fmt.Sprintf("%%.%ds", f.W)
+			}
 		default:
 			f.format = fmt.Sprintf("%%.%ds", f.MaxW)
 		}
@@ -71,11 +75,7 @@ func (f String) Just() col.Justification {
 	return f.StrJust
 }
 
-// Check returns a non-nil error if the parameters are invalid
+// Check returns a nil error
 func (f String) Check() error {
-	if f.W <= 0 {
-		return fmt.Errorf("the width (%d) must be > 0", f.W)
-	}
-
 	return nil
 }
