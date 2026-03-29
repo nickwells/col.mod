@@ -1,5 +1,9 @@
+github.com/nickwells/english.mod v1.2.8 h1:L470dqeFck17nr3nrLZ5A+iS+FSnsPEXlttYx5Y2Q/Q=
+github.com/nickwells/english.mod v1.2.8/go.mod h1:fZuG1RFyjtyY2E4to6kxtnegrkTC8U1tHqES+sYG2Zw=
 github.com/nickwells/mathutil.mod/v2 v2.5.9 h1:j2QgyqL3LnBFA1rcF+jY/aZ4C/aT7Frwm7zEBt4r8ns=
 github.com/nickwells/mathutil.mod/v2 v2.5.9/go.mod h1:v5A/bKd3xew9KNOicu+MEz3kugBVSnR193nRqo3NGVs=
+github.com/nickwells/strdist.mod/v2 v2.1.1 h1:ERxu9/eOAE1C/8+wUWh8+jSp+Z/C26U4p6Ikl8+HxvY=
+github.com/nickwells/strdist.mod/v2 v2.1.1/go.mod h1:3DYvkTxJV9h1VyFmD7nKOcqe9m/1HBtIMw02UJq7csY=
 github.com/nickwells/testhelper.mod/v2 v2.5.0 h1:YJVxIs/RW9D+KkltTM1J01dyDYx0n+G6lsuKZ0ROzbY=
 github.com/nickwells/testhelper.mod/v2 v2.5.0/go.mod h1:MKIJiDiPNgn4r7/46XG5aclWV0eu0mlSqzsPLadi2V8=
 github.com/nickwells/twrap.mod v1.5.13 h1:MxjgbIcrzLofEbxaE+aG0Kv+y1WEdx1HigoqJVSCSE8=
