@@ -132,7 +132,7 @@ func (h *Header) createHeaderFromSpans(sg spanGrid) {
 					h.headerRows[row] += fmt.Sprintf("%*s", sWidth, "")
 				} else {
 					nonTextWidth := sWidth - textWidth
-					dashCount := (nonTextWidth) / 2 //nolint:mnd
+					dashCount := nonTextWidth / 2 //nolint:mnd
 
 					h.headerRows[row] += fmt.Sprintf("%s%s%s",
 						strings.Repeat("-", dashCount),

@@ -297,7 +297,7 @@ func TestReport_MkCmpFunc(t *testing.T) {
 				t.Fatal("\t: unexpected error making Cols: ", err)
 			}
 
-			r, err := (b).MakeReport(P{}, os.Stdout, tc.repCols)
+			r, err := b.MakeReport(P{}, os.Stdout, tc.repCols)
 			if err != nil {
 				t.Log(tc.IDStr())
 				t.Fatal("\t: unexpected error making Report: ", err)
