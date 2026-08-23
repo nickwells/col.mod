@@ -383,7 +383,7 @@ func TestReport_Print(t *testing.T) {
 
 			var rptOut strings.Builder
 
-			r, err := (b).MakeReport(P{}, &rptOut, tc.repCols)
+			r, err := b.MakeReport(P{}, &rptOut, tc.repCols)
 			if err != nil {
 				t.Log(tc.IDStr())
 				t.Fatal("\t: unexpected error making Report: ", err)
